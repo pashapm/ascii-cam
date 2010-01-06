@@ -32,6 +32,9 @@ class AsciiViewer extends ImageView {
 
 	private String m_fname;
 	
+	private float m_shiftY = 0;
+	private float m_shiftX = 0;
+	
 	void savePicture(String fname) {
 		this.m_savePic = true;
 		m_fname = fname;
@@ -48,6 +51,7 @@ class AsciiViewer extends ImageView {
 		m_matrix.reset();
 		m_matrix.setRotate(-90,0,0);
 		m_matrix.postTranslate(0, AsciiCam.s_screenHeight);
+		m_matrix.postTranslate(m_shiftX, m_shiftY);
 		
 		Canvas canvas2 = null;
 		if (m_savePic) {
@@ -87,5 +91,13 @@ class AsciiViewer extends ImageView {
 
 	void setWaiting(boolean b) {
 		m_wait = b;
+	}
+	
+	/**
+	 * Shifts the image
+	 */
+	void shift(float x, float y) {
+		m_shiftX += x;
+		m_shiftY += y;
 	}
 }
