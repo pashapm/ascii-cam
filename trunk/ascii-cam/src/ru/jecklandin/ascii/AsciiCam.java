@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,14 +21,18 @@ import android.hardware.Camera.Parameters;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class AsciiCam extends Activity { 
 	
@@ -47,6 +53,8 @@ public class AsciiCam extends Activity {
 	Preview m_preview;
 	boolean m_photoMode = true;
 	PicPreviewCallback m_prCallback = new PicPreviewCallback();
+	
+	private static String s_aboutString = "© Evgeny Balandin, 2010 \n jeck.landin@gmail.com";
 	
 	/** Called when the activity is first created. */ 
     @Override 
@@ -73,6 +81,8 @@ public class AsciiCam extends Activity {
         File f = new File(AsciiCam.SAVE_DIR);
         if (!f.exists())
         	f.mkdir();
+        
+        registerForContextMenu(m_viewer);
     }  
  
 	@Override
@@ -111,56 +121,63 @@ public class AsciiCam extends Activity {
 				 }
 				 m_viewer.invalidate();
 				 return true;
-			 } 
+			 } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+				 m_viewer.shift(0, 15);
+			 } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+				 m_viewer.shift(0, -15);
+			 } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+				 m_viewer.shift(-15, 0);
+			 } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+				 m_viewer.shift(15, 0);
+			 }
+			 m_viewer.invalidate();
 		 }
 		return  super.onKeyDown(keyCode, event);
 	}
 	
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuItem menuitem1 = menu.add(Menu.NONE, 0, Menu.NONE, "Save as text");
-		menuitem1.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		MenuItem menuitem0 = menu.add(Menu.NONE, 0, Menu.NONE, "Save");
+		menuitem0.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem arg0) {
-				Date d = Calendar.getInstance().getTime();
-				String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
-				AsciiCam.saveText(fname, m_viewer.m_text);
-				Toast.makeText(AsciiCam.this, fname+".txt saved to "+AsciiCam.SAVE_DIR, 1000).show();
+				m_viewer.showContextMenu();
 				return false;
 			}
 		});
 		
-		MenuItem menuitem2 = menu.add(Menu.NONE, 1, Menu.NONE, "Save as image");
+		MenuItem menuitem1 = menu.add(Menu.NONE, 1, Menu.NONE, "Invert");
+		menuitem1.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+			@Override
+			public boolean onMenuItemClick(MenuItem arg0) {
+				invert();
+				return false;
+			}
+			
+		});
+		
+	    MenuItem menuitem2 = menu.add(Menu.NONE, 2, Menu.NONE, "Grayscale");
 		menuitem2.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem arg0) {
-				Date d = Calendar.getInstance().getTime();
-				String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
-				m_viewer.savePicture(fname);
-				Toast.makeText(AsciiCam.this, fname+".png saved to "+AsciiCam.SAVE_DIR, 1000).show();
+				flipGrayscale();
 				return false;
 			}
 		});
 		
-		MenuItem menuitem3 = menu.add(Menu.NONE, 2, Menu.NONE, "Invert");
+		MenuItem menuitem3 = menu.add(Menu.NONE, 3, Menu.NONE, "About");
 		menuitem3.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-
-			@Override
-			public boolean onMenuItemClick(MenuItem arg0) {
-				AsciiCam.this.invert();
-				return false;
-			}
-			
-		});
-		
-	    MenuItem menuitem4 = menu.add(Menu.NONE, 3, Menu.NONE, AsciiCam.s_grayscale ? "Black & white" : "Grayscale");
-		menuitem4.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem arg0) {
-				AsciiCam.this.flipGrayscale();
+				AlertDialog.Builder d = new AlertDialog.Builder(AsciiCam.this);
+				d.setIcon(R.drawable.icon);
+				d.setMessage(AsciiCam.s_aboutString);
+				d.setTitle("About Asciicam");
+				d.show();
 				return false;
 			}
 		});
@@ -170,9 +187,36 @@ public class AsciiCam extends Activity {
     
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.getItem(2).setEnabled(AsciiCam.s_grayscale);
-		menu.getItem(3).setTitle(AsciiCam.s_grayscale ? "Black & white" : "Grayscale");
+		menu.getItem(1).setEnabled(AsciiCam.s_grayscale);
+		menu.getItem(2).setTitle(AsciiCam.s_grayscale ? "Black & white" : "Grayscale");
 		return super.onPrepareOptionsMenu(menu);
+	}
+	
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+			super.onCreateContextMenu(menu, v, menuInfo);
+			menu.add(0, 0, 0, "As image");
+			menu.add(0, 1, 1, "As text");
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		Date d = Calendar.getInstance().getTime();
+		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
+		switch (item.getItemId()) {
+		case 0:
+			m_viewer.savePicture(fname);
+			Toast.makeText(AsciiCam.this, fname+".png saved to "+AsciiCam.SAVE_DIR, 1000).show();
+			return true;
+		case 1:
+			AsciiCam.saveText(fname, m_viewer.m_text);
+			Toast.makeText(AsciiCam.this, fname+".txt saved to "+AsciiCam.SAVE_DIR, 1000).show();
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
 	}
     
     protected void flipGrayscale() {
@@ -197,8 +241,8 @@ public class AsciiCam extends Activity {
 
 	private Bitmap resizeBitmap(Bitmap b) {
 		Bitmap b1 = null; ;
-		if (b.getHeight()!=AsciiCam.CONV_HEIGHT/2 || b.getWidth()!=AsciiCam.CONV_WIDTH/2) {
-			b1 = Bitmap.createScaledBitmap(b, AsciiCam.CONV_WIDTH / 2, AsciiCam.CONV_HEIGHT / 2, false);	
+		if (b.getHeight()!=AsciiCam.CONV_HEIGHT || b.getWidth()!=AsciiCam.CONV_WIDTH) {
+			b1 = Bitmap.createScaledBitmap(b, AsciiCam.CONV_WIDTH, AsciiCam.CONV_HEIGHT, false);	
 			b.recycle();
 		} else {
 			b1 = b;
@@ -322,6 +366,7 @@ public class AsciiCam extends Activity {
 			publishProgress(f);
 		}
 	}
+	
 } 
 
 
