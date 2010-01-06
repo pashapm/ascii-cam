@@ -44,6 +44,7 @@ public class AsciiCam extends Activity {
 
 	static boolean s_inverted = false;
 	static boolean s_grayscale = true; 
+	static boolean s_hiRes = false;
 	
 	static String SAVE_DIR = "/sdcard/asciicam/";
 	
@@ -55,6 +56,7 @@ public class AsciiCam extends Activity {
 	PicPreviewCallback m_prCallback = new PicPreviewCallback();
 	
 	private static String s_aboutString = "© Evgeny Balandin, 2010 \n jeck.landin@gmail.com";
+
 	
 	/** Called when the activity is first created. */ 
     @Override 
@@ -182,6 +184,16 @@ public class AsciiCam extends Activity {
 			}
 		});
 		
+	    MenuItem menuitem4 = menu.add(Menu.NONE, 4, Menu.NONE, "Hi-res");
+		menuitem4.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			
+			@Override
+			public boolean onMenuItemClick(MenuItem arg0) {
+				changeResolution();
+				return false;
+			}
+		});
+		
 		return super.onCreateOptionsMenu(menu);
 	}
     
@@ -189,6 +201,7 @@ public class AsciiCam extends Activity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.getItem(1).setEnabled(AsciiCam.s_grayscale);
 		menu.getItem(2).setTitle(AsciiCam.s_grayscale ? "Black & white" : "Grayscale");
+		menu.getItem(4).setTitle(AsciiCam.s_hiRes? "Low-res" : "Hi-res");
 		return super.onPrepareOptionsMenu(menu);
 	}
 	
@@ -230,6 +243,10 @@ public class AsciiCam extends Activity {
     	convertBitmapAsync(m_viewer.m_bitmap);
   	}
 
+	protected void changeResolution() {
+		AsciiCam.s_hiRes =! AsciiCam.s_hiRes;
+		convertBitmapAsync(m_viewer.m_bitmap);
+	}
 	
 	@Override
 	protected void onStop() {
@@ -240,9 +257,10 @@ public class AsciiCam extends Activity {
 	}  
 
 	private Bitmap resizeBitmap(Bitmap b) {
-		Bitmap b1 = null; ;
-		if (b.getHeight()!=AsciiCam.CONV_HEIGHT || b.getWidth()!=AsciiCam.CONV_WIDTH) {
-			b1 = Bitmap.createScaledBitmap(b, AsciiCam.CONV_WIDTH, AsciiCam.CONV_HEIGHT, false);	
+		Bitmap b1 = null;
+		int s = AsciiCam.s_hiRes ? 1 : 2;
+		if (b.getHeight()!=AsciiCam.CONV_HEIGHT / s || b.getWidth()!=AsciiCam.CONV_WIDTH  / s) {
+			b1 = Bitmap.createScaledBitmap(b, AsciiCam.CONV_WIDTH / s, AsciiCam.CONV_HEIGHT / s, false);	
 			b.recycle();
 		} else {
 			b1 = b;
