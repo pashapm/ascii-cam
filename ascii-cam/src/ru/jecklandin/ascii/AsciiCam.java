@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
+import ru.jecklandin.ascii.AsciiViewer.ActionMode;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -55,7 +57,7 @@ public class AsciiCam extends Activity {
 	boolean m_photoMode = true;
 	PicPreviewCallback m_prCallback = new PicPreviewCallback();
 	
-	private static String s_aboutString = "© Evgeny Balandin, 2010 \n jeck.landin@gmail.com";
+	private static String s_aboutString = "© Evgeny Balandin, 2010 \n balandin.evgeny@gmail.com";
 
 	
 	/** Called when the activity is first created. */ 
@@ -113,15 +115,10 @@ public class AsciiCam extends Activity {
 
 				 return true;
 			 } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)  {
-				 Math.abs(m_viewer.m_textsize--);
-				 m_viewer.invalidate();
+				 m_viewer.changeTextSize(-1);
 				 return true;
 			 } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-				 m_viewer.m_textsize++;
-				 if (m_viewer.m_textsize > 15) {
-					 m_viewer.m_textsize = 8;
-				 }
-				 m_viewer.invalidate();
+				 m_viewer.changeTextSize(1);
 				 return true;
 			 } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
 				 m_viewer.shift(0, 15);
@@ -144,113 +141,97 @@ public class AsciiCam extends Activity {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem arg0) {
-				m_viewer.showContextMenu();
+				((AsciiViewer)m_viewer).showContextMenu(ActionMode.SAVE);
 				return false;
 			}
 		});
 		
-		MenuItem menuitem1 = menu.add(Menu.NONE, 1, Menu.NONE, "Invert");
+		MenuItem menuitem1 = menu.add(Menu.NONE, 1, Menu.NONE, "Edit");
 		menuitem1.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			
+			@Override
+			public boolean onMenuItemClick(MenuItem arg0) {
+				((AsciiViewer)m_viewer).showContextMenu(ActionMode.EDIT);
+				return false;
+			}
+		});
 
-			@Override
-			public boolean onMenuItemClick(MenuItem arg0) {
-				invert();
-				return false;
-			}
-			
-		});
-		
-	    MenuItem menuitem2 = menu.add(Menu.NONE, 2, Menu.NONE, "Grayscale");
+		MenuItem menuitem2 = menu.add(Menu.NONE, 2, Menu.NONE, "About");
 		menuitem2.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			
-			@Override
-			public boolean onMenuItemClick(MenuItem arg0) {
-				flipGrayscale();
-				return false;
-			}
-		});
-		
-		MenuItem menuitem3 = menu.add(Menu.NONE, 3, Menu.NONE, "About");
-		menuitem3.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem arg0) {
 				AlertDialog.Builder d = new AlertDialog.Builder(AsciiCam.this);
 				d.setIcon(R.drawable.icon);
 				d.setMessage(AsciiCam.s_aboutString);
-				d.setTitle("About Asciicam");
+				d.setTitle(getResources().getString(R.string.app_name));
 				d.show();
 				return false;
 			}
 		});
-		
-	    MenuItem menuitem4 = menu.add(Menu.NONE, 4, Menu.NONE, "Hi-res");
-		menuitem4.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			
-			@Override
-			public boolean onMenuItemClick(MenuItem arg0) {
-				changeResolution();
-				return false;
-			}
-		});
-		
 		return super.onCreateOptionsMenu(menu);
 	}
     
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.getItem(1).setEnabled(AsciiCam.s_grayscale);
-		menu.getItem(2).setTitle(AsciiCam.s_grayscale ? "Black & white" : "Grayscale");
-		menu.getItem(4).setTitle(AsciiCam.s_hiRes? "Low-res" : "Hi-res");
-		return super.onPrepareOptionsMenu(menu);
-	}
-	
-
-	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 			super.onCreateContextMenu(menu, v, menuInfo);
-			menu.add(0, 0, 0, "As image");
-			menu.add(0, 1, 1, "As text");
+			if (m_viewer.m_actionMode == ActionMode.SAVE) {
+				menu.add(0, 0, 0, "As image");
+				menu.add(0, 1, 1, "As text");
+			} else if (m_viewer.m_actionMode == ActionMode.EDIT) {
+				menu.add(0, 2, 2, AsciiCam.s_hiRes? "Low-res" : "Hi-res");
+				menu.add(0, 3, 3, AsciiCam.s_grayscale ? "Black & white" : "Grayscale");
+				if (AsciiCam.s_grayscale) {
+					menu.add(0, 4, 4, "Invert");
+				}
+			}
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		Date d = Calendar.getInstance().getTime();
-		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
 		switch (item.getItemId()) {
 		case 0:
-			m_viewer.savePicture(fname);
-			Toast.makeText(AsciiCam.this, fname+".png saved to "+AsciiCam.SAVE_DIR, 1000).show();
-			return true;
+			savePicture();
+			break;
 		case 1:
-			AsciiCam.saveText(fname, m_viewer.m_text);
-			Toast.makeText(AsciiCam.this, fname+".txt saved to "+AsciiCam.SAVE_DIR, 1000).show();
-			return true;
+			saveText();
+			break;
+		case 2:
+			changeResolution();
+			break;
+		case 3:
+			flipGrayscale();
+			break;
+		case 4:
+			invert();
+			break;
 		default:
-			return super.onContextItemSelected(item);
 		}
+		return true;
 	}
     
     protected void flipGrayscale() {
+    	m_viewer.reset();
 		AsciiCam.s_grayscale =! AsciiCam.s_grayscale;
 		AsciiCam.s_inverted = false;
 		convertBitmapAsync(m_viewer.m_bitmap);
 	}
 
 	protected void invert() {
+		m_viewer.reset();
     	AsciiCam.s_inverted =! AsciiCam.s_inverted;
     	convertBitmapAsync(m_viewer.m_bitmap);
   	}
 
 	protected void changeResolution() {
+		m_viewer.reset();
 		AsciiCam.s_hiRes =! AsciiCam.s_hiRes;
 		convertBitmapAsync(m_viewer.m_bitmap);
 	}
 	
 	@Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
 		super.onStop();
 		m_camera.release();
 		Log.d("ACT", "onStop");
@@ -288,31 +269,35 @@ public class AsciiCam extends Activity {
 	/**
 	 * Async. convert the given bitmap
 	 */
-	public void convertBitmapAsync(Bitmap b) {
+	void convertBitmapAsync(Bitmap b) {
 		(new ConvertingAsyncTask()).execute(b);
 	}
+
+	void savePicture() {
+		Date d = Calendar.getInstance().getTime();
+		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
+		m_viewer.savePicture(fname);
+		Toast.makeText(AsciiCam.this, fname+".png saved to "+AsciiCam.SAVE_DIR, 1000).show();
+	}
 	
-	public static boolean saveText(String fname, String[] text) {
-		if (text==null) {
-			throw new IllegalArgumentException("Text is null");
-		}
-		FileWriter fw = null;
+	void saveText() {
+		Date d = Calendar.getInstance().getTime();
+		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
+    	FileWriter fw = null;
 		try {
 			fw = new FileWriter(AsciiCam.SAVE_DIR + fname + ".txt");
 			StringBuffer buf = new StringBuffer();
 			
-			for (String s : text) {
+			for (String s : m_viewer.m_text) {
 				buf.append(s);
 				buf.append("\n");
 			}
 			fw.write(buf.toString());
-			return true;
+			Toast.makeText(AsciiCam.this, fname+".txt saved to "+AsciiCam.SAVE_DIR, 1000).show();
 		}catch (FileNotFoundException e) {
 			e.printStackTrace();
-			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
-			return false;
 		} finally {
 			if (fw!=null) {
 				try {

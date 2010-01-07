@@ -9,13 +9,18 @@ import android.graphics.Movie;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.widget.ImageView;
 
 class AsciiViewer extends ImageView {
 	
+	static int DEFAUL_FONT = 6;
+	enum ActionMode {SAVE, EDIT};
+	ActionMode m_actionMode;
+	
 	Bitmap m_bitmap;
 	String[] m_text;
-	int m_textsize = 6;
+	int m_textsize = AsciiViewer.DEFAUL_FONT;
 	
 	Matrix m_matrix = new Matrix();
 	
@@ -88,6 +93,31 @@ class AsciiViewer extends ImageView {
 			invalidate();
 		}
 	}
+	
+	/**
+	 * Points of the image that was really pressed
+	 */
+	private float m_touchOffsetX = 0;
+	private float m_touchOffsetY = 0;
+	
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            	 m_touchOffsetX = x - m_shiftX;
+            	 m_touchOffsetY = y - m_shiftY;
+                break;
+            case MotionEvent.ACTION_MOVE:
+//            	 Log.d("#####", "MOVE"+(x-m_touchOffsetX+m_shiftX)+" "+(y-m_touchOffsetY+m_shiftY));
+//            	 Log.d("!!!!!", "MOVE"+(x)+" "+m_touchOffsetX+" "+m_shiftX);
+            	 shiftTo((x-m_touchOffsetX), (y-m_touchOffsetY));
+                 break;
+
+        }
+        return true;
+    }
 
 	void setWaiting(boolean b) {
 		m_wait = b;
@@ -99,5 +129,35 @@ class AsciiViewer extends ImageView {
 	void shift(float x, float y) {
 		m_shiftX += x;
 		m_shiftY += y;
+		invalidate();
+	}
+	
+	void shiftTo(float x, float y) {
+		m_shiftX = x;
+		m_shiftY = y;
+		invalidate();
+	}
+
+	void reset() {
+		m_shiftX = 0;
+		m_shiftY = 0;
+		m_textsize = AsciiViewer.DEFAUL_FONT;
+	}
+	
+	/**
+	 * Reduce or increase text size.
+	 * @param delta
+	 */
+	void changeTextSize(int delta) {
+		m_textsize+=delta;
+		if (m_textsize < 4 || m_textsize > 15) {
+			 m_textsize = AsciiViewer.DEFAUL_FONT; 
+	    } 
+		invalidate();
+	}
+	
+	void showContextMenu(ActionMode mode) {
+		m_actionMode = mode;
+		showContextMenu();
 	}
 }
