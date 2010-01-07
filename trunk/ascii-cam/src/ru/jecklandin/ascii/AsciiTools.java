@@ -85,7 +85,7 @@ public class AsciiTools {
 	private static float getAverageValue(Bitmap bm, int x, int y, int sq_size) {
 		float hsv[] = new float[3];
 		float val_sum = 0;
-		if (false) { //low quality
+		if (true) { //low quality
 			Color.colorToHSV(bm.getPixel(x*sq_size+sq_size/2, y*sq_size+sq_size/2), hsv);
 			return hsv[2]*10;	
 		} else {
