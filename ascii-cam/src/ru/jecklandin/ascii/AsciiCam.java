@@ -98,8 +98,6 @@ public class AsciiCam extends Activity {
 				 setContentView(m_viewer);
 				 m_camera.stopPreview(); 
 				 return true;
-			 } else if ( keyCode == KeyEvent.KEYCODE_MENU ) {
-				 return true;
 			 } else {
 				 return super.onKeyDown(keyCode, event);
 			 }
@@ -173,6 +171,13 @@ public class AsciiCam extends Activity {
 	}
     
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.getItem(0).setVisible(!m_photoMode);
+		menu.getItem(1).setVisible(!m_photoMode);
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 			super.onCreateContextMenu(menu, v, menuInfo);
@@ -185,6 +190,8 @@ public class AsciiCam extends Activity {
 				if (AsciiCam.s_grayscale) {
 					menu.add(0, 4, 4, "Invert");
 				}
+				menu.add(0, 5, 5, "Reduce font size (\"Volume down\" button)");
+				menu.add(0, 6, 6, "Increase font size (\"Volume up\" button)");
 			}
 	}
 
@@ -205,6 +212,12 @@ public class AsciiCam extends Activity {
 			break;
 		case 4:
 			invert();
+			break;
+		case 5:
+			m_viewer.changeTextSize(-1);
+			break;
+		case 6:
+			m_viewer.changeTextSize(1);
 			break;
 		default:
 		}

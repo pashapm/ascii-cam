@@ -129,7 +129,7 @@ class AsciiViewer extends ImageView {
 	void shift(float x, float y) {
 		m_shiftX += x;
 		m_shiftY += y;
-		invalidate();
+		invalidate(); 
 	}
 	
 	void shiftTo(float x, float y) {
