@@ -1,4 +1,4 @@
-package ru.jecklandin.ascii;
+package ru.jecklandin.asciicam;
 
 import android.content.Context;
 import android.graphics.Bitmap;

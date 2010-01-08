@@ -1,4 +1,4 @@
-package ru.jecklandin.ascii;
+package ru.jecklandin.asciicam;
 
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
