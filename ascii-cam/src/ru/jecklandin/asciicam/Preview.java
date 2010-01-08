@@ -1,4 +1,4 @@
-package ru.jecklandin.ascii;
+package ru.jecklandin.asciicam;
 
 import java.io.IOException;
 

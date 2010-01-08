@@ -1,4 +1,4 @@
-package ru.jecklandin.ascii;
+package ru.jecklandin.asciicam;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import ru.jecklandin.ascii.AsciiViewer.ActionMode;
+import ru.jecklandin.asciicam.R;
+import ru.jecklandin.asciicam.AsciiViewer.ActionMode;
 
 import android.app.Activity;
 import android.app.AlertDialog;

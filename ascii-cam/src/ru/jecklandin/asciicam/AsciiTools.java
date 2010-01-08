@@ -1,11 +1,11 @@
-package ru.jecklandin.ascii;
+package ru.jecklandin.asciicam;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.jecklandin.ascii.AsciiCam.ConvertingAsyncTask;
-import ru.jecklandin.ascii.AsciiCam.ProgressCallback;
+import ru.jecklandin.asciicam.AsciiCam.ConvertingAsyncTask;
+import ru.jecklandin.asciicam.AsciiCam.ProgressCallback;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
