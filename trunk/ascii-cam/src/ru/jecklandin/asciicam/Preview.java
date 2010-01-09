@@ -12,8 +12,8 @@ import android.view.SurfaceView;
 class Preview extends SurfaceView implements SurfaceHolder.Callback {
     SurfaceHolder mHolder;
     Camera mCamera;
-    AsciiCam cam;
-    Preview(AsciiCam context, Camera caam) {
+    AsciiCamera cam;
+    Preview(AsciiCamera context, Camera caam) {
         super(context);  
         cam = context;
         mCamera = caam;
