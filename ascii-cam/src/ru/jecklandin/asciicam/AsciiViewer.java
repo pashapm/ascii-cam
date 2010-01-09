@@ -51,11 +51,11 @@ class AsciiViewer extends ImageView {
 		Paint p = new Paint();
 		p.setTextSize(m_textsize);
 		p.setTypeface(Typeface.MONOSPACE);
-		p.setColor(AsciiCam.s_inverted ? Color.BLACK : Color.WHITE);
+		p.setColor(AsciiCamera.s_inverted ? Color.BLACK : Color.WHITE);
 		
 		m_matrix.reset();
 		m_matrix.setRotate(-90,0,0);
-		m_matrix.postTranslate(0, AsciiCam.s_screenHeight);
+		m_matrix.postTranslate(0, AsciiCamera.s_screenHeight);
 		m_matrix.postTranslate(m_shiftX, m_shiftY);
 		
 		Canvas canvas2 = null;
@@ -67,7 +67,7 @@ class AsciiViewer extends ImageView {
 		}
 		canvas.setMatrix(m_matrix);
 			
-		if (AsciiCam.s_inverted) {
+		if (AsciiCamera.s_inverted) {
 			canvas.drawARGB(255, 255, 255, 255);
 		} else {
 			canvas.drawARGB(255, 0, 0, 0);
@@ -88,7 +88,7 @@ class AsciiViewer extends ImageView {
 		}
 		
 		if (m_savePic && !m_wait) {
-			AsciiCam.savePicture(m_fname, m_saveBitmap);
+			AsciiCamera.savePicture(m_fname, m_saveBitmap);
 			m_savePic = false;
 			invalidate();
 		}

@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.jecklandin.asciicam.AsciiCam.ConvertingAsyncTask;
-import ru.jecklandin.asciicam.AsciiCam.ProgressCallback;
+import ru.jecklandin.asciicam.AsciiCamera.ConvertingAsyncTask;
+import ru.jecklandin.asciicam.AsciiCamera.ProgressCallback;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -55,7 +55,7 @@ public class AsciiTools {
 		
 		for (int i=0; i<sq_width; i++) {
 			for (int j=0; j<sq_height; j++) {
-				if (AsciiCam.s_grayscale) {
+				if (AsciiCamera.s_grayscale) {
 					symbols[i][j] = (int)(AsciiTools.getAverageValue(b, i, j, sq_size));
 				} else {
 					symbols[i][j] = (int)(AsciiTools.getNeatValue(b, i, j, sq_size));
@@ -70,8 +70,8 @@ public class AsciiTools {
 		for (int i=0; i<sq_width; i++) {
 			StringBuffer buf = new StringBuffer("");
 			for (int j=sq_height-1; j>0; j--) {
-				int s = (AsciiCam.s_inverted && AsciiCam.s_grayscale) ? (10-symbols[i][j]) : (symbols[i][j]);
-				if (AsciiCam.s_grayscale) {
+				int s = (AsciiCamera.s_inverted && AsciiCamera.s_grayscale) ? (10-symbols[i][j]) : (symbols[i][j]);
+				if (AsciiCamera.s_grayscale) {
 					buf.append(AsciiTools.symbolsMap.get(s));	
 				} else {
 					buf.append(AsciiTools.neatSymbolsMap.get(s));

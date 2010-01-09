@@ -9,8 +9,8 @@ import android.util.Log;
 
 
 class PicSettingCallback implements PictureCallback {
-	private AsciiCam m_asciiCam;
-	PicSettingCallback(AsciiCam  v) {
+	private AsciiCamera m_asciiCam;
+	PicSettingCallback(AsciiCamera  v) {
 		this.m_asciiCam = v;
 	} 
 	

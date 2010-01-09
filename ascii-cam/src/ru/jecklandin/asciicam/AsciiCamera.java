@@ -37,7 +37,7 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
-public class AsciiCam extends Activity { 
+public class AsciiCamera extends Activity { 
 	
 	static int s_screenHeight = 0;
 	static int s_screenWidth = 0;
@@ -69,21 +69,21 @@ public class AsciiCam extends Activity {
         
         Display disp = ((WindowManager) this.getSystemService(
 				android.content.Context.WINDOW_SERVICE)).getDefaultDisplay();
-        AsciiCam.s_screenHeight = disp.getHeight();
-        AsciiCam.s_screenWidth = disp.getWidth();
-        AsciiCam.CONV_HEIGHT = AsciiCam.s_screenHeight;//* 3 / 4;
-        AsciiCam.CONV_WIDTH = AsciiCam.s_screenWidth;// * 3 / 4;
+        AsciiCamera.s_screenHeight = disp.getHeight();
+        AsciiCamera.s_screenWidth = disp.getWidth();
+        AsciiCamera.CONV_HEIGHT = AsciiCamera.s_screenHeight;//* 3 / 4;
+        AsciiCamera.CONV_WIDTH = AsciiCamera.s_screenWidth;// * 3 / 4;
         
         m_viewer = new AsciiViewer(this);
         m_camera = Camera.open(); 
         Parameters pp = m_camera.getParameters();
-        pp.setPictureSize(AsciiCam.CONV_WIDTH , AsciiCam.CONV_HEIGHT);
+        pp.setPictureSize(AsciiCamera.CONV_WIDTH , AsciiCamera.CONV_HEIGHT);
         m_camera.setParameters(pp);
         
         m_preview = new Preview(this, m_camera);
         setContentView(m_preview);  
         
-        File f = new File(AsciiCam.SAVE_DIR);
+        File f = new File(AsciiCamera.SAVE_DIR);
         if (!f.exists())
         	f.mkdir();
         
@@ -107,7 +107,7 @@ public class AsciiCam extends Activity {
 				 m_photoMode = true;
 				
 				 //crapy solution :(
-				 Intent in = new Intent(this, AsciiCam.class);
+				 Intent in = new Intent(this, AsciiCamera.class);
 				 startActivity(in);
 				 onStop();
 				 finish();
@@ -160,9 +160,9 @@ public class AsciiCam extends Activity {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem arg0) {
-				AlertDialog.Builder d = new AlertDialog.Builder(AsciiCam.this);
+				AlertDialog.Builder d = new AlertDialog.Builder(AsciiCamera.this);
 				d.setIcon(R.drawable.icon);
-				d.setMessage(AsciiCam.s_aboutString);
+				d.setMessage(AsciiCamera.s_aboutString);
 				d.setTitle(getResources().getString(R.string.app_name));
 				d.show();
 				return false;
@@ -186,9 +186,9 @@ public class AsciiCam extends Activity {
 				menu.add(0, 0, 0, "As image");
 				menu.add(0, 1, 1, "As text");
 			} else if (m_viewer.m_actionMode == ActionMode.EDIT) {
-				menu.add(0, 2, 2, AsciiCam.s_hiRes? "Low-res" : "Hi-res");
-				menu.add(0, 3, 3, AsciiCam.s_grayscale ? "Black & white" : "Grayscale");
-				if (AsciiCam.s_grayscale) {
+				menu.add(0, 2, 2, AsciiCamera.s_hiRes? "Low-res" : "Hi-res");
+				menu.add(0, 3, 3, AsciiCamera.s_grayscale ? "Black & white" : "Grayscale");
+				if (AsciiCamera.s_grayscale) {
 					menu.add(0, 4, 4, "Invert");
 				}
 				menu.add(0, 5, 5, "Reduce font size (\"Volume down\" button)");
@@ -227,20 +227,20 @@ public class AsciiCam extends Activity {
     
     protected void flipGrayscale() {
     	m_viewer.reset();
-		AsciiCam.s_grayscale =! AsciiCam.s_grayscale;
-		AsciiCam.s_inverted = false;
+		AsciiCamera.s_grayscale =! AsciiCamera.s_grayscale;
+		AsciiCamera.s_inverted = false;
 		convertBitmapAsync(m_viewer.m_bitmap);
 	}
 
 	protected void invert() {
 		m_viewer.reset();
-    	AsciiCam.s_inverted =! AsciiCam.s_inverted;
+    	AsciiCamera.s_inverted =! AsciiCamera.s_inverted;
     	convertBitmapAsync(m_viewer.m_bitmap);
   	}
 
 	protected void changeResolution() {
 		m_viewer.reset();
-		AsciiCam.s_hiRes =! AsciiCam.s_hiRes;
+		AsciiCamera.s_hiRes =! AsciiCamera.s_hiRes;
 		convertBitmapAsync(m_viewer.m_bitmap);
 	}
 	
@@ -253,9 +253,9 @@ public class AsciiCam extends Activity {
 
 	private Bitmap resizeBitmap(Bitmap b) {
 		Bitmap b1 = null;
-		int s = AsciiCam.s_hiRes ? 1 : 2;
-		if (b.getHeight()!=AsciiCam.CONV_HEIGHT / s || b.getWidth()!=AsciiCam.CONV_WIDTH  / s) {
-			b1 = Bitmap.createScaledBitmap(b, AsciiCam.CONV_WIDTH / s, AsciiCam.CONV_HEIGHT / s, false);	
+		int s = AsciiCamera.s_hiRes ? 1 : 2;
+		if (b.getHeight()!=AsciiCamera.CONV_HEIGHT / s || b.getWidth()!=AsciiCamera.CONV_WIDTH  / s) {
+			b1 = Bitmap.createScaledBitmap(b, AsciiCamera.CONV_WIDTH / s, AsciiCamera.CONV_HEIGHT / s, false);	
 			b.recycle();
 		} else {
 			b1 = b;
@@ -291,15 +291,15 @@ public class AsciiCam extends Activity {
 		Date d = Calendar.getInstance().getTime();
 		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
 		m_viewer.savePicture(fname);
-		Toast.makeText(AsciiCam.this, fname+".png saved to "+AsciiCam.SAVE_DIR, 1000).show();
+		Toast.makeText(AsciiCamera.this, fname+".png saved to "+AsciiCamera.SAVE_DIR, 1000).show();
 	}
-	
+	 
 	void saveText() {
 		Date d = Calendar.getInstance().getTime();
 		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
     	FileWriter fw = null;
 		try {
-			fw = new FileWriter(AsciiCam.SAVE_DIR + fname + ".txt");
+			fw = new FileWriter(AsciiCamera.SAVE_DIR + fname + ".txt");
 			StringBuffer buf = new StringBuffer();
 			
 			for (String s : m_viewer.m_text) {
@@ -307,7 +307,7 @@ public class AsciiCam extends Activity {
 				buf.append("\n");
 			}
 			fw.write(buf.toString());
-			Toast.makeText(AsciiCam.this, fname+".txt saved to "+AsciiCam.SAVE_DIR, 1000).show();
+			Toast.makeText(AsciiCamera.this, fname+".txt saved to "+AsciiCamera.SAVE_DIR, 1000).show();
 		}catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -330,7 +330,7 @@ public class AsciiCam extends Activity {
 		
 		FileOutputStream fos = null;
 		try {
-			fos = new FileOutputStream(AsciiCam.SAVE_DIR + fname + ".png");
+			fos = new FileOutputStream(AsciiCamera.SAVE_DIR + fname + ".png");
 			b.compress(CompressFormat.PNG, 100, fos);
 			return true;
 		} catch (FileNotFoundException e) {
