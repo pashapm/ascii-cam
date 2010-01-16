@@ -8,13 +8,17 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.nullwire.trace.ExceptionHandler;
+
 import ru.jecklandin.asciicam.R;
 import ru.jecklandin.asciicam.AsciiViewer.ActionMode;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Movie;
@@ -23,6 +27,9 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Display;
@@ -49,7 +56,7 @@ public class AsciiCamera extends Activity {
 	static boolean s_grayscale = true; 
 	static boolean s_hiRes = false;
 	
-	static String SAVE_DIR = "/sdcard/asciicam/";
+	public static String SAVE_DIR = "/sdcard/DCIM/asciicamera/";
 	
 	Camera m_camera;
 	Bitmap s_bitmap;
@@ -65,8 +72,11 @@ public class AsciiCamera extends Activity {
     @Override 
     public void onCreate(Bundle savedInstanceState) { 
         super.onCreate(savedInstanceState); 
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
+        Handler han = new Handler();
+        ExceptionHandler.register(this, "http://android-exceptions-handler.appspot.com/exception.groovy",han);
         
+        getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE); 
         Display disp = ((WindowManager) this.getSystemService(
 				android.content.Context.WINDOW_SERVICE)).getDefaultDisplay();
         AsciiCamera.s_screenHeight = disp.getHeight();
@@ -76,24 +86,29 @@ public class AsciiCamera extends Activity {
         
         m_viewer = new AsciiViewer(this);
         m_camera = Camera.open(); 
-        Parameters pp = m_camera.getParameters();
-        pp.setPictureSize(AsciiCamera.CONV_WIDTH , AsciiCamera.CONV_HEIGHT);
-        m_camera.setParameters(pp);
+        
+       
+//          
+//        Parameters pp = m_camera.getParameters();
+//        pp.setPictureSize(AsciiCamera.CONV_WIDTH , AsciiCamera.CONV_HEIGHT);
+//        m_camera.setParameters(pp);
         
         m_preview = new Preview(this, m_camera);
         setContentView(m_preview);  
         
         File f = new File(AsciiCamera.SAVE_DIR);
         if (!f.exists())
-        	f.mkdir();
+        	f.mkdirs();
         
         registerForContextMenu(m_viewer);
+        
     }  
- 
+   
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		 //int q= 8/0;
 		 if (m_photoMode) { 
-			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_CAMERA) {
+			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
 				 m_photoMode = false;
 				 m_camera.takePicture(null, null, new PicSettingCallback(this));
 				 setContentView(m_viewer);
@@ -101,9 +116,9 @@ public class AsciiCamera extends Activity {
 				 return true;
 			 } else {
 				 return super.onKeyDown(keyCode, event);
-			 }
+			 }  
 		 } else {
-			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_CAMERA) {
+			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_BACK) {
 				 m_photoMode = true;
 				
 				 //crapy solution :(
@@ -164,6 +179,7 @@ public class AsciiCamera extends Activity {
 				d.setIcon(R.drawable.icon);
 				d.setMessage(AsciiCamera.s_aboutString);
 				d.setTitle(getResources().getString(R.string.app_name));
+				d.create();
 				d.show();
 				return false;
 			}
@@ -288,6 +304,10 @@ public class AsciiCamera extends Activity {
 	}
 
 	void savePicture() {
+		if (AsciiCamera.isCardMounted()) {
+			Toast.makeText(this, getString(R.string.unmount), Toast.LENGTH_SHORT).show();
+			return;
+		}
 		Date d = Calendar.getInstance().getTime();
 		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
 		m_viewer.savePicture(fname);
@@ -295,6 +315,10 @@ public class AsciiCamera extends Activity {
 	}
 	 
 	void saveText() {
+		if (AsciiCamera.isCardMounted()) {
+			Toast.makeText(this, getString(R.string.unmount),Toast.LENGTH_SHORT).show();
+			return;
+		}
 		Date d = Calendar.getInstance().getTime();
 		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
     	FileWriter fw = null;
@@ -344,7 +368,38 @@ public class AsciiCamera extends Activity {
 			}
 		}
 	}
-
+	
+	
+	public static boolean isCardMounted() {
+		return Environment.getExternalStorageState().equals(Environment.MEDIA_SHARED);
+	}
+	
+	/**
+	 * Show dialog asking if user wants to send a report. Used by remote-stacktrace
+	 * @param sendt
+	 */
+	public void showExceptionDialog(final Thread sendt) {
+		AlertDialog.Builder b = new AlertDialog.Builder(this);
+		b.setCancelable(false);
+		b.setTitle(getString(R.string.app_name)+" had crashed last time");
+		b.setMessage("Please press \"Send\" to submit report (~1Kb). \nPress \"Cancel\" to continue.");
+		b.setPositiveButton("Send", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				sendt.start();
+			}
+		});
+		b.setNegativeButton("Cancel", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+			}
+		});
+		b.create().show();
+	}
+	
 	// ==================  async stuff
 	
 	interface ProgressCallback {
