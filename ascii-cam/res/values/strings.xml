@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, Ascii!</string>
     <string name="app_name">AsciiCamera</string>
+    <string name="unmount">Please unmount sdcard to save the file</string>
 </resources>
