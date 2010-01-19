@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
+    android:layout_height="fill_parent" android:orientation="horizontal">
+
+<LinearLayout android:id="@+id/LinearLayout01" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="1" android:orientation="horizontal" android:background="#00ff0000">
+</LinearLayout>
+<LinearLayout android:id="@+id/LinearLayout02" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical" android:paddingLeft="5sp" android:paddingRight="5sp" android:background="#ffffffff" android:layout_weight="1">
+
+<LinearLayout android:id="@+id/LinearLayout04" android:layout_height="wrap_content" android:orientation="vertical" android:layout_width="fill_parent" android:layout_weight="1" android:background="#cccccc"><TextView android:id="@+id/TextView01" android:layout_height="wrap_content" android:textColor="#ff000000" android:text="+/-" android:typeface="monospace" android:layout_width="fill_parent" android:gravity="center_horizontal" android:textSize="17sp"></TextView><SeekBar android:id="@+id/SeekBar01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:max="15" android:progress="8" android:paddingLeft="5sp" android:paddingRight="5sp"></SeekBar></LinearLayout><CheckBox android:id="@+id/CheckBox01" android:layout_height="wrap_content" android:text="Invert" android:textColor="#ff000000" android:textScaleX="1" android:typeface="monospace" android:layout_width="fill_parent" android:textSize="17sp" android:layout_weight="1" android:background="#aaaaaa" android:gravity="center"></CheckBox>
+<LinearLayout android:id="@+id/LinearLayout03" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="1" android:background="#888888"><TextView android:id="@+id/TextView02" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:text="Image size" android:layout_weight="1.5" android:paddingLeft="5sp" android:textSize="17sp" android:typeface="monospace" android:gravity="center" android:textColor="#ff000000"></TextView>
+
+<Spinner android:id="@+id/Spinner01" android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center_vertical"></Spinner>
+</LinearLayout><RadioGroup android:id="@+id/RadioGroup01" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_weight="1" android:background="#aaaaaa"><RadioButton android:id="@+id/RadioButton01" android:text="Grayscale" android:textColor="#ff000000" android:typeface="monospace" android:layout_width="wrap_content" android:layout_weight="1" android:checked="true" android:textSize="17sp" android:layout_height="wrap_content"></RadioButton>
+<RadioButton android:id="@+id/RadioButton02" android:text="B&amp;W" android:textColor="#ff000000" android:typeface="monospace" android:layout_weight="1" android:layout_marginLeft="20sp" android:layout_width="wrap_content" android:textSize="17sp" android:layout_height="wrap_content"></RadioButton>
+</RadioGroup>
+
+
+
+
+
+<LinearLayout android:id="@+id/LinearLayout03" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="1" android:background="#cccccc"><TextView android:id="@+id/TextView02" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:layout_weight="1.5" android:paddingLeft="5sp" android:textSize="17sp" android:typeface="monospace" android:gravity="center" android:textColor="#ff000000" android:text="Quality"></TextView>
+
+<Spinner android:id="@+id/Spinner01" android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center_vertical"></Spinner>
+</LinearLayout>
+
+
+
+<ViewFlipper android:id="@+id/ViewFlipper01" android:layout_width="wrap_content" android:layout_height="wrap_content"><LinearLayout android:id="@+id/LinearLayout05" android:layout_weight="1" android:layout_height="wrap_content" android:background="#eeeeee" android:layout_width="fill_parent"><Button android:id="@+id/Button01" android:text="Save as picture" android:layout_gravity="center" android:layout_width="fill_parent" android:layout_weight="1" android:layout_height="wrap_content" android:typeface="monospace" android:textSize="14sp"></Button>
+<Button android:id="@+id/Button02" android:layout_width="fill_parent" android:layout_weight="1" android:text="Save as text" android:layout_height="wrap_content" android:typeface="monospace" android:textSize="14sp" android:layout_gravity="right|center_vertical"></Button>
+</LinearLayout><TextSwitcher android:id="@+id/TextSwitcher01" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextSwitcher>
+</ViewFlipper>
+</LinearLayout>
+
 </LinearLayout>
