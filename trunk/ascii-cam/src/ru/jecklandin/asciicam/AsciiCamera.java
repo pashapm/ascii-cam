@@ -8,28 +8,19 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.nullwire.trace.ExceptionHandler;
-
-import ru.jecklandin.asciicam.R;
 import ru.jecklandin.asciicam.AsciiViewer.ActionMode;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Movie;
 import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Display;
@@ -42,7 +33,8 @@ import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.Toast;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.nullwire.trace.ExceptionHandler;
 
 public class AsciiCamera extends Activity { 
 	
@@ -72,6 +64,8 @@ public class AsciiCamera extends Activity {
     @Override 
     public void onCreate(Bundle savedInstanceState) { 
         super.onCreate(savedInstanceState); 
+        
+        Log.d("#####", "onCreate!!!!!!!!!!!!!!!!!!!!!!1");
         Handler han = new Handler();
         ExceptionHandler.register(this, "http://android-exceptions-handler.appspot.com/exception.groovy",han);
         
@@ -86,9 +80,8 @@ public class AsciiCamera extends Activity {
         
         m_viewer = new AsciiViewer(this);
         m_camera = Camera.open(); 
-        
-       
-//          
+         
+//        dont work on android > 2.0  
 //        Parameters pp = m_camera.getParameters();
 //        pp.setPictureSize(AsciiCamera.CONV_WIDTH , AsciiCamera.CONV_HEIGHT);
 //        m_camera.setParameters(pp);
@@ -101,13 +94,12 @@ public class AsciiCamera extends Activity {
         	f.mkdirs();
         
         registerForContextMenu(m_viewer);
-        
     }  
    
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		 //int q= 8/0;
 		 if (m_photoMode) { 
+
 			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
 				 m_photoMode = false;
 				 m_camera.takePicture(null, null, new PicSettingCallback(this));
@@ -120,13 +112,7 @@ public class AsciiCamera extends Activity {
 		 } else {
 			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_BACK) {
 				 m_photoMode = true;
-				
-				 //crapy solution :(
-				 Intent in = new Intent(this, AsciiCamera.class);
-				 startActivity(in);
-				 onStop();
-				 finish();
-
+				 restartApp();
 				 return true;
 			 } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)  {
 				 m_viewer.changeTextSize(-1);
@@ -142,7 +128,13 @@ public class AsciiCamera extends Activity {
 				 m_viewer.shift(-15, 0);
 			 } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
 				 m_viewer.shift(15, 0);
+			 } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+				 Intent i = new Intent(this, SlidingMenu.class);
+				 startActivity(i); 
+				 return true;
 			 }
+			 
+			 
 			 m_viewer.invalidate();
 		 }
 		return  super.onKeyDown(keyCode, event);
@@ -347,6 +339,16 @@ public class AsciiCamera extends Activity {
 		}
 	}
 	
+	//android:clearTaskOnLaunch is set, nevertheless sometimes onCreate isn't called... 
+	//then need to restart
+	private void restartApp() {
+		//crapy solution :(
+		 Intent in = new Intent(this, AsciiCamera.class);
+		 onStop();
+		 startActivity(in);
+		 finish();
+	}
+	
 	public static boolean savePicture(String fname, Bitmap b) {
 		if (b==null) {
 			throw new IllegalArgumentException("Bitmap is null");
@@ -394,7 +396,7 @@ public class AsciiCamera extends Activity {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				
+				ExceptionHandler.cleanStackTraces();
 			}
 		});
 		b.create().show();
@@ -436,6 +438,29 @@ public class AsciiCamera extends Activity {
 		@Override
 		public void update(Float f) {
 			publishProgress(f);
+		}
+	}
+	
+	class Facade  {
+		
+		public void setTextSize(int ts) {
+			m_viewer.setTextSize(ts);
+		}
+		
+		public void setInverted(boolean inverted) {
+			
+		}
+		
+		public void setQuality(AsciiTools.QUALITY qua) {
+			
+		}
+		
+		public void setImageSize(int x, int y) {
+			
+		}
+		
+		public void setMode(AsciiTools.MODE mode) {
+			
 		}
 	}
 	

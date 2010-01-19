@@ -85,6 +85,13 @@ class AsciiViewer extends ImageView {
 			canvas.drawText("Asciization "+(int)(m_waitProgress*100)+"%", 
 				   canvas.getWidth()/2 - p.measureText("Asciization 99%")/2, //sample text size
 				   canvas.getHeight()/2, p);
+		} else if (m_text==null) {
+			m_matrix.reset();
+			canvas.setMatrix(m_matrix);
+			p.setTextSize(17);
+			canvas.drawText("Resizing the picture...", 
+					   canvas.getWidth()/2 - p.measureText("Resizing the picture...")/2, //sample text size
+					   canvas.getHeight()/2, p);
 		}
 		
 		if (m_savePic && !m_wait) {
@@ -110,8 +117,6 @@ class AsciiViewer extends ImageView {
             	 m_touchOffsetY = y - m_shiftY;
                 break;
             case MotionEvent.ACTION_MOVE:
-//            	 Log.d("#####", "MOVE"+(x-m_touchOffsetX+m_shiftX)+" "+(y-m_touchOffsetY+m_shiftY));
-//            	 Log.d("!!!!!", "MOVE"+(x)+" "+m_touchOffsetX+" "+m_shiftX);
             	 shiftTo((x-m_touchOffsetX), (y-m_touchOffsetY));
                  break;
 
@@ -141,7 +146,7 @@ class AsciiViewer extends ImageView {
 	void reset() {
 		m_shiftX = 0;
 		m_shiftY = 0;
-		m_textsize = AsciiViewer.DEFAUL_FONT;
+		m_textsize = AsciiViewer.DEFAUL_FONT; 
 	}
 	
 	/**
@@ -153,6 +158,11 @@ class AsciiViewer extends ImageView {
 		if (m_textsize < 4 || m_textsize > 15) {
 			 m_textsize = AsciiViewer.DEFAUL_FONT; 
 	    } 
+		invalidate();
+	}
+	
+	void setTextSize(int size) {
+		m_textsize = size;
 		invalidate();
 	}
 	

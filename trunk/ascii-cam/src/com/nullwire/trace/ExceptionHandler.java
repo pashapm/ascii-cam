@@ -101,10 +101,11 @@ public class ExceptionHandler {
 		
 		boolean stackTracesFound = false;
 		// We'll return true if any stack traces were found
-		if ( searchForStackTraces().length > 0 ) {
+		String[] traces = searchForStackTraces();
+		if ( traces!=null && searchForStackTraces().length > 0 ) {
 			stackTracesFound = true;
 		}
-		
+		 
 		//it sends report
 		new Thread() {
 			@Override
@@ -158,8 +159,19 @@ public class ExceptionHandler {
 		G.URL = url;
 		// Call the default register method
 		register(app, han);
-	}
+	}  
 
+	public static void cleanStackTraces() {
+		try {
+			String[] list = searchForStackTraces();
+			for ( int i = 0; i < list.length; i ++ ) {
+				File file = new File(G.FILES_PATH+"/"+list[i]);
+				file.delete();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * Search for stack trace files.
@@ -167,7 +179,7 @@ public class ExceptionHandler {
 	 */
 	private static String[] searchForStackTraces() {
 		if ( stackTraceFileList != null ) {
-			return stackTraceFileList;
+			//return stackTraceFileList;
 		}
 		File dir = new File(G.FILES_PATH + "/");
 		// Try to create the files folder if it doesn't exist
@@ -175,31 +187,27 @@ public class ExceptionHandler {
 		// Filter for ".stacktrace" files
 		FilenameFilter filter = new FilenameFilter() { 
 			public boolean accept(File dir, String name) {
-				Log.d("#####", G.FILES_PATH+ "/"+name);
 				return name.endsWith(".stacktrace"); 
 			} 
 		}; 
 		
-		Log.d("#####", "FILTERED!!!"+dir.list(filter).length);
-		
-		
-		List<String> fnames = new ArrayList<String>();
-		for (String fname : dir.list(filter)) {
-			File f = new File(G.FILES_PATH+ "/"+fname);
-			
-			if (f.exists()) {
-				fnames.add(fname);
-				Log.d("#####OK", fname);
-			}
-		}
-		
-		String[] fnames_arr = new String[fnames.size()];
-		for (int i=0; i<fnames.size(); ++i) {
-			fnames_arr[i] = fnames.get(i);
-		}
-		
-		return (stackTraceFileList = fnames_arr);	
-	}
+//		
+//		List<String> fnames = new ArrayList<String>();
+//		for (String fname : dir.list(filter)) {
+//			File f = new File(G.FILES_PATH+ "/"+fname);
+//			
+//			if (f.exists()) {
+//				fnames.add(fname);
+//			}
+//		} 
+//		
+//		String[] fnames_arr = new String[fnames.size()];
+//		for (int i=0; i<fnames.size(); ++i) {
+//			fnames_arr[i] = fnames.get(i);  
+//		}
+//		
+		return (stackTraceFileList = dir.list(filter));	 
+	}   
 	
 	/**
 	 * Look into the files folder to see if there are any "*.stacktrace" files.

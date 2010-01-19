@@ -14,6 +14,10 @@ import android.util.Log;
 
 public class AsciiTools {
 
+	public enum QUALITY {LOW, MEDIUM, HIGH};
+	
+	public enum MODE {GRAYSCALE, BW};
+	
 	static Map<Integer, String> symbolsMap = new HashMap<Integer, String>() {{
 		put(0, " ");
 		put(1, ".");
