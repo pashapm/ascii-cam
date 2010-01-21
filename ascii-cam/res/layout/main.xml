@@ -5,9 +5,10 @@
 
 <LinearLayout android:id="@+id/LinearLayout01" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="1" android:orientation="horizontal" android:background="#00ff0000">
 </LinearLayout>
-<LinearLayout android:id="@+id/LinearLayout02" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical" android:paddingLeft="5sp" android:paddingRight="5sp" android:background="#ffffffff" android:layout_weight="1">
+<LinearLayout android:id="@+id/LinearLayout02" android:layout_width="fill_parent" android:orientation="vertical" android:layout_weight="1" android:layout_height="fill_parent" android:background="#00ffffff">
 
-<LinearLayout android:id="@+id/LinearLayout04" android:layout_height="wrap_content" android:orientation="vertical" android:layout_width="fill_parent" android:layout_weight="1" android:background="#cccccc"><TextView android:id="@+id/TextView01" android:layout_height="wrap_content" android:textColor="#ff000000" android:text="+/-" android:typeface="monospace" android:layout_width="fill_parent" android:gravity="center_horizontal" android:textSize="17sp"></TextView><SeekBar android:id="@+id/SeekBar01" android:layout_height="wrap_content" android:layout_width="fill_parent" android:max="15" android:progress="8" android:paddingLeft="5sp" android:paddingRight="5sp"></SeekBar></LinearLayout><CheckBox android:id="@+id/CheckBox01" android:layout_height="wrap_content" android:text="Invert" android:textColor="#ff000000" android:textScaleX="1" android:typeface="monospace" android:layout_width="fill_parent" android:textSize="17sp" android:layout_weight="1" android:background="#aaaaaa" android:gravity="center"></CheckBox>
+<LinearLayout android:id="@+id/LinearLayout04" android:layout_width="fill_parent" android:background="#cccccc" android:orientation="horizontal" android:layout_height="wrap_content" android:layout_weight="1" android:minHeight="50dp"><TextView android:id="@+id/TextView01" android:layout_height="wrap_content" android:textColor="#ff000000" android:text="+/-" android:typeface="monospace" android:gravity="center_horizontal" android:textSize="17sp" android:layout_width="wrap_content" android:layout_gravity="center"></TextView><SeekBar android:id="@+id/SeekBar01" android:layout_width="fill_parent" android:paddingLeft="5sp" android:paddingRight="5sp" android:max="150" android:layout_gravity="center" android:layout_height="wrap_content"></SeekBar>
+</LinearLayout><CheckBox android:id="@+id/CheckBox01" android:layout_height="wrap_content" android:text="Invert" android:textColor="#ff000000" android:textScaleX="1" android:typeface="monospace" android:layout_width="fill_parent" android:textSize="17sp" android:background="#aaaaaa" android:gravity="center" android:layout_weight="1.2"></CheckBox>
 <LinearLayout android:id="@+id/LinearLayout03" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="1" android:background="#888888"><TextView android:id="@+id/TextView02" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:text="Image size" android:layout_weight="1.5" android:paddingLeft="5sp" android:textSize="17sp" android:typeface="monospace" android:gravity="center" android:textColor="#ff000000"></TextView>
 
 <Spinner android:id="@+id/Spinner01" android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center_vertical"></Spinner>
@@ -19,17 +20,24 @@
 
 
 
-<LinearLayout android:id="@+id/LinearLayout03" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="1" android:background="#cccccc"><TextView android:id="@+id/TextView02" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:layout_weight="1.5" android:paddingLeft="5sp" android:textSize="17sp" android:typeface="monospace" android:gravity="center" android:textColor="#ff000000" android:text="Quality"></TextView>
+<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_weight="1" android:background="#cccccc" android:id="@+id/LinearLayout10" android:visibility="gone"><TextView android:id="@+id/TextView02" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="center" android:layout_weight="1.5" android:paddingLeft="5sp" android:textSize="17sp" android:typeface="monospace" android:gravity="center" android:textColor="#ff000000" android:text="Quality"></TextView>
 
-<Spinner android:id="@+id/Spinner01" android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center_vertical"></Spinner>
+<Spinner android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center_vertical" android:id="@+id/Spinner02"></Spinner>
+
 </LinearLayout>
 
 
 
-<ViewFlipper android:id="@+id/ViewFlipper01" android:layout_width="wrap_content" android:layout_height="wrap_content"><LinearLayout android:id="@+id/LinearLayout05" android:layout_weight="1" android:layout_height="wrap_content" android:background="#eeeeee" android:layout_width="fill_parent"><Button android:id="@+id/Button01" android:text="Save as picture" android:layout_gravity="center" android:layout_width="fill_parent" android:layout_weight="1" android:layout_height="wrap_content" android:typeface="monospace" android:textSize="14sp"></Button>
-<Button android:id="@+id/Button02" android:layout_width="fill_parent" android:layout_weight="1" android:text="Save as text" android:layout_height="wrap_content" android:typeface="monospace" android:textSize="14sp" android:layout_gravity="right|center_vertical"></Button>
-</LinearLayout><TextSwitcher android:id="@+id/TextSwitcher01" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextSwitcher>
+<LinearLayout android:id="@+id/LinearLayout09" android:layout_weight="1" android:orientation="horizontal" android:background="#cccccc" android:layout_height="wrap_content" android:layout_width="fill_parent">
+
+
+<Button android:id="@+id/Button03" android:layout_weight="1" android:text="Reset" android:textSize="12sp" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_gravity="center" android:typeface="monospace"></Button><Button android:id="@+id/Button04" android:layout_height="wrap_content" android:layout_weight="1" android:layout_width="wrap_content" android:text="About" android:typeface="monospace" android:textSize="12sp" android:layout_gravity="center"></Button>
+</LinearLayout><ViewFlipper android:id="@+id/ViewFlipper01" android:layout_height="wrap_content" android:layout_width="fill_parent"><LinearLayout android:id="@+id/LinearLayout05" android:layout_weight="1" android:layout_height="wrap_content" android:background="#eeeeee" android:layout_width="fill_parent"><Button android:id="@+id/Button01" android:text="Save as picture" android:layout_gravity="center" android:layout_width="fill_parent" android:layout_weight="1" android:layout_height="wrap_content" android:typeface="monospace" android:textSize="12sp"></Button>
+<Button android:id="@+id/Button02" android:layout_width="fill_parent" android:layout_weight="1" android:text="Save as text" android:typeface="monospace" android:layout_gravity="center" android:textSize="12sp" android:layout_height="wrap_content"></Button>
+
+</LinearLayout>
 </ViewFlipper>
+
 </LinearLayout>
 
 </LinearLayout>

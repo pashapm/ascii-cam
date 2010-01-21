@@ -16,8 +16,6 @@ public class AsciiTools {
 
 	public enum QUALITY {LOW, MEDIUM, HIGH};
 	
-	public enum MODE {GRAYSCALE, BW};
-	
 	static Map<Integer, String> symbolsMap = new HashMap<Integer, String>() {{
 		put(0, " ");
 		put(1, ".");
@@ -52,7 +50,20 @@ public class AsciiTools {
 	}};
 	
 	public static String[] convertBitmap(Bitmap b, ProgressCallback progressCallback) {
-		int sq_size = 2;
+		int sq_size = 3;
+		switch (AsciiCamera.s_quality) {
+		case LOW:
+			sq_size = 4;
+			break;
+		case MEDIUM:
+			sq_size = 3;
+			break;
+		case HIGH:
+			sq_size = 2;
+		default:
+			break;
+		};
+
 		int sq_width = b.getWidth()/sq_size; 
 		int sq_height = b.getHeight()/sq_size;
 		int[][] symbols = new int[sq_width][sq_height];

@@ -1,5 +1,9 @@
 package ru.jecklandin.asciicam;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -82,16 +86,18 @@ class AsciiViewer extends ImageView {
 			m_matrix.reset();
 			canvas.setMatrix(m_matrix);
 			p.setTextSize(17);
-			canvas.drawText("Asciization "+(int)(m_waitProgress*100)+"%", 
-				   canvas.getWidth()/2 - p.measureText("Asciization 99%")/2, //sample text size
-				   canvas.getHeight()/2, p);
+//			canvas.drawText("Asciization "+(int)(m_waitProgress*100)+"%", 
+//				   canvas.getWidth()/2 - p.measureText("Asciization 99%")/2, //sample text size
+//				   canvas.getHeight()/2, p);
+			canvas.drawText("Asciization "+(int)(m_waitProgress*100)+"%", 20, 20, p);
 		} else if (m_text==null) {
 			m_matrix.reset();
 			canvas.setMatrix(m_matrix);
 			p.setTextSize(17);
-			canvas.drawText("Resizing the picture...", 
-					   canvas.getWidth()/2 - p.measureText("Resizing the picture...")/2, //sample text size
-					   canvas.getHeight()/2, p);
+//			canvas.drawText("Resizing the picture...", 
+//					   canvas.getWidth()/2 - p.measureText("Resizing the picture...")/2, //sample text size
+//					   canvas.getHeight()/2, p);
+			canvas.drawText("Resizing the picture...", 20, 20, p);
 		}
 		
 		if (m_savePic && !m_wait) {
@@ -149,10 +155,6 @@ class AsciiViewer extends ImageView {
 		m_textsize = AsciiViewer.DEFAUL_FONT; 
 	}
 	
-	/**
-	 * Reduce or increase text size.
-	 * @param delta
-	 */
 	void changeTextSize(int delta) {
 		m_textsize+=delta;
 		if (m_textsize < 4 || m_textsize > 15) {
@@ -170,4 +172,8 @@ class AsciiViewer extends ImageView {
 		m_actionMode = mode;
 		showContextMenu();
 	}
+	
+
+	
+	
 }
