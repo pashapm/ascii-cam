@@ -7,10 +7,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
+import ru.jecklandin.asciicam.AsciiTools.QUALITY;
 import ru.jecklandin.asciicam.AsciiViewer.ActionMode;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
@@ -38,34 +41,45 @@ import com.nullwire.trace.ExceptionHandler;
 
 public class AsciiCamera extends Activity { 
 	
-	static int s_screenHeight = 0;
-	static int s_screenWidth = 0;
+	//screen size
+	static int s_screenHeight ;
+	static int s_screenWidth ;
 	
-	static int CONV_HEIGHT = 240;
-	static int CONV_WIDTH = 320;
-
-	static boolean s_inverted = false;
-	static boolean s_grayscale = true; 
-	static boolean s_hiRes = false;
+	//base bitmap size
+	static int CONV_HEIGHT ;
+	static int CONV_WIDTH ;
+	
+	//global settings 
+	static BitmapSize[] s_availableSizes;
+	static BitmapSize s_bitmapSize;
+	
+	static boolean s_inverted;
+	static boolean s_grayscale; 
+	static AsciiTools.QUALITY s_quality;
+	
+	static Bitmap s_defaultBitmap;
 	
 	public static String SAVE_DIR = "/sdcard/DCIM/asciicamera/";
 	
 	Camera m_camera;
-	Bitmap s_bitmap;
 	AsciiViewer m_viewer;
 	Preview m_preview;
 	boolean m_photoMode = true;
 	PicPreviewCallback m_prCallback = new PicPreviewCallback();
+	private Facade m_facade; 
 	
 	private static String s_aboutString = "© Evgeny Balandin, 2010 \n balandin.evgeny@gmail.com";
-
 	
+	public static AsciiCamera s_instance;
+		
 	/** Called when the activity is first created. */ 
     @Override 
     public void onCreate(Bundle savedInstanceState) { 
         super.onCreate(savedInstanceState); 
         
-        Log.d("#####", "onCreate!!!!!!!!!!!!!!!!!!!!!!1");
+        // :-|
+        AsciiCamera.s_instance = this;
+        
         Handler han = new Handler();
         ExceptionHandler.register(this, "http://android-exceptions-handler.appspot.com/exception.groovy",han);
         
@@ -94,7 +108,17 @@ public class AsciiCamera extends Activity {
         	f.mkdirs();
         
         registerForContextMenu(m_viewer);
+        reset();
     }  
+    
+    public Facade getFacade() {
+    	//TODO INNER CLASSES
+    	if (m_facade == null) {
+    		m_facade = new Facade();;
+    	} 
+    	return m_facade;
+    	
+    }
    
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -167,17 +191,21 @@ public class AsciiCamera extends Activity {
 			
 			@Override
 			public boolean onMenuItemClick(MenuItem arg0) {
-				AlertDialog.Builder d = new AlertDialog.Builder(AsciiCamera.this);
-				d.setIcon(R.drawable.icon);
-				d.setMessage(AsciiCamera.s_aboutString);
-				d.setTitle(getResources().getString(R.string.app_name));
-				d.create();
-				d.show();
+				AsciiCamera.showAbout(AsciiCamera.this);
 				return false;
 			}
 		});
 		return super.onCreateOptionsMenu(menu);
 	}
+    
+    public static void showAbout(Context ctx) {
+    	AlertDialog.Builder d = new AlertDialog.Builder(ctx);
+		d.setIcon(R.drawable.icon);
+		d.setMessage(AsciiCamera.s_aboutString);
+		d.setTitle(ctx.getResources().getString(R.string.app_name));
+		d.create();
+		d.show();
+    }
     
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -194,7 +222,7 @@ public class AsciiCamera extends Activity {
 				menu.add(0, 0, 0, "As image");
 				menu.add(0, 1, 1, "As text");
 			} else if (m_viewer.m_actionMode == ActionMode.EDIT) {
-				menu.add(0, 2, 2, AsciiCamera.s_hiRes? "Low-res" : "Hi-res");
+				//menu.add(0, 2, 2, AsciiCamera.s_hiRes? "Low-res" : "Hi-res");
 				menu.add(0, 3, 3, AsciiCamera.s_grayscale ? "Black & white" : "Grayscale");
 				if (AsciiCamera.s_grayscale) {
 					menu.add(0, 4, 4, "Invert");
@@ -237,45 +265,47 @@ public class AsciiCamera extends Activity {
     	m_viewer.reset();
 		AsciiCamera.s_grayscale =! AsciiCamera.s_grayscale;
 		AsciiCamera.s_inverted = false;
-		convertBitmapAsync(m_viewer.m_bitmap);
 	}
 
 	protected void invert() {
 		m_viewer.reset();
     	AsciiCamera.s_inverted =! AsciiCamera.s_inverted;
-    	convertBitmapAsync(m_viewer.m_bitmap);
   	}
 
 	protected void changeResolution() {
 		m_viewer.reset();
-		AsciiCamera.s_hiRes =! AsciiCamera.s_hiRes;
-		convertBitmapAsync(m_viewer.m_bitmap);
+		//AsciiCamera.s_hiRes =! AsciiCamera.s_hiRes;
+		convert();
 	}
 	
 	@Override
 	protected void onStop() {
 		super.onStop();
 		m_camera.release();
-		Log.d("ACT", "onStop");
 	}  
 
-	private Bitmap resizeBitmap(Bitmap b) {
-		Bitmap b1 = null;
-		int s = AsciiCamera.s_hiRes ? 1 : 2;
-		if (b.getHeight()!=AsciiCamera.CONV_HEIGHT / s || b.getWidth()!=AsciiCamera.CONV_WIDTH  / s) {
-			b1 = Bitmap.createScaledBitmap(b, AsciiCamera.CONV_WIDTH / s, AsciiCamera.CONV_HEIGHT / s, false);	
-			b.recycle();
-		} else {
-			b1 = b;
-		}
-		return b1;
+	private Bitmap resizeBitmap(Bitmap b, int w, int h) {
+//		Bitmap b1 = null;
+//		if (b.getHeight() != h || b.getWidth() != w ) {
+//			b1 = Bitmap.createScaledBitmap(b, w, h , false);	
+//			b.recycle();
+//		} else {
+//			b1 = b;
+//		}
+//		return b1;
+		return Bitmap.createScaledBitmap(b, w, h , false);	
+	}
+	
+	public void convert() {
+		convertBitmapAsync(AsciiCamera.s_defaultBitmap, 
+				AsciiCamera.s_bitmapSize);
 	}
 	
 	/**
 	 * Sync. convert the given bitmap
 	 */
 	public void convertBitmap(Bitmap b) {
-		Bitmap b1 = resizeBitmap(b);
+		Bitmap b1 = resizeBitmap(b, AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT);
 		m_viewer.m_bitmap = b1;
 		m_viewer.m_text = AsciiTools.convertBitmap(b1, new ProgressCallback() {
 			
@@ -291,8 +321,10 @@ public class AsciiCamera extends Activity {
 	/**
 	 * Async. convert the given bitmap
 	 */
-	void convertBitmapAsync(Bitmap b) {
-		(new ConvertingAsyncTask()).execute(b);
+	void convertBitmapAsync(Bitmap b, BitmapSize size) {
+		(new ConvertingAsyncTask())
+			.setSize(size.m_w, size.m_h)
+			.execute(b);
 	}
 
 	void savePicture() {
@@ -402,6 +434,30 @@ public class AsciiCamera extends Activity {
 		b.create().show();
 	}
 	
+	private void reset() {
+		m_viewer.m_textsize = AsciiViewer.DEFAUL_FONT;
+		AsciiCamera.s_inverted = false;
+		AsciiCamera.s_grayscale = true; 
+		AsciiCamera.s_quality = QUALITY.LOW;
+		AsciiCamera.s_bitmapSize = new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT);
+		AsciiCamera.s_availableSizes = getResolutions();
+		m_viewer.reset();
+	}
+	
+	BitmapSize[] getResolutions() {
+		float w = AsciiCamera.CONV_WIDTH;
+		float h = AsciiCamera.CONV_HEIGHT;
+		float ratio = w/h;
+		float[] mp = {0.3f, 0.5f, 0.8f, 1f, 1.3f, 1.6f, 2f};
+		BitmapSize[] vec = new BitmapSize[mp.length];
+		for (int i=0; i<mp.length; ++i) {
+			int nw = (int) (w * mp[i]);
+			int nh = (int) (nw / ratio);
+			vec[i] = new BitmapSize(nw, nh);
+		}
+		return vec;
+	}
+	
 	// ==================  async stuff
 	
 	interface ProgressCallback {
@@ -409,12 +465,20 @@ public class AsciiCamera extends Activity {
 	}
 	
 	class ConvertingAsyncTask extends AsyncTask<Bitmap, Float, String[]> implements ProgressCallback {
-
+		private int s_w;
+		private int s_h;
+		
+		protected ConvertingAsyncTask setSize(int w, int h) {
+			s_w = w;
+			s_h = h;
+			return this;
+		}
+		
         @Override
 		protected void onProgressUpdate(Float... values) {
         	m_viewer.m_waitProgress = values[0];
         	m_viewer.postInvalidate();
-		}
+ 		}
 
 		@Override
         protected void onPreExecute() {
@@ -426,11 +490,20 @@ public class AsciiCamera extends Activity {
 			m_viewer.m_text = result;
 			m_viewer.setWaiting(false);
 			m_viewer.postInvalidate();
+			AsciiCamera.s_bitmapSize = new BitmapSize(s_w, s_h);
 		}
 
 		@Override
 		protected String[] doInBackground(Bitmap... params) {
-			Bitmap b1 = resizeBitmap(params[0]);
+			Bitmap b1;
+			if (s_w == AsciiCamera.CONV_WIDTH && s_h == AsciiCamera.CONV_HEIGHT) {
+				if (AsciiCamera.s_defaultBitmap == null)  {
+					AsciiCamera.s_defaultBitmap = resizeBitmap(params[0], s_w, s_h);
+				}
+				b1 = AsciiCamera.s_defaultBitmap;
+			} else {
+				b1 = resizeBitmap(params[0], s_w, s_h);
+			}
 			m_viewer.m_bitmap = b1;
 			return AsciiTools.convertBitmap(b1, this);	
 		}
@@ -444,23 +517,76 @@ public class AsciiCamera extends Activity {
 	class Facade  {
 		
 		public void setTextSize(int ts) {
-			m_viewer.setTextSize(ts);
+			m_viewer.setTextSize(ts + 4);
 		}
 		
 		public void setInverted(boolean inverted) {
-			
+			if (inverted != s_inverted) {
+				invert();
+		    	convert();
+			}
 		}
 		
 		public void setQuality(AsciiTools.QUALITY qua) {
-			
+			if (qua != AsciiCamera.s_quality) {
+				AsciiCamera.s_quality = qua;
+				convert();
+			}
 		}
 		
-		public void setImageSize(int x, int y) {
-			
+		public void setImageSize(BitmapSize bm) {
+			if (! bm.equals(AsciiCamera.s_bitmapSize)) {
+				AsciiCamera.s_bitmapSize = bm;
+				convert();
+			}
 		}
 		
-		public void setMode(AsciiTools.MODE mode) {
-			
+		public void setGrayscale(boolean gs) {
+			if (gs != AsciiCamera.s_grayscale) {
+				flipGrayscale();
+				convert();
+			}
+		}
+		
+		public void reset() {
+			AsciiCamera.this.reset();
+			AsciiCamera.this.convert();
+		}
+		
+		public int getTextSize() {
+			return m_viewer.m_textsize - 4;
+		}
+		
+		public boolean isGrayscale() {
+			return AsciiCamera.s_grayscale;
+		}
+		
+		public boolean isInverted() {
+			return AsciiCamera.s_inverted;
+		}
+		
+		public BitmapSize[] getAvailableSizes() {
+			return getResolutions();
+		}
+		
+		public int getCurrentWidth() {
+			return AsciiCamera.s_bitmapSize.m_w;
+		}
+		
+		public int getCurrentHeight() {
+			return AsciiCamera.s_bitmapSize.m_h;
+		}
+		
+		public QUALITY getQuality() {
+			return AsciiCamera.s_quality;
+		}
+		
+		public void saveText() {
+			 AsciiCamera.this.saveText();
+		}
+		
+		public void savePicture() {
+			AsciiCamera.this.savePicture();
 		}
 	}
 	

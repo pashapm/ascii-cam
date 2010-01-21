@@ -16,8 +16,8 @@ class PicSettingCallback implements PictureCallback {
 	
 	@Override
 	public void onPictureTaken(byte[] data, Camera camera) {
-		m_asciiCam.convertBitmapAsync(BitmapFactory.decodeByteArray(data, 0, data.length));
-		//m_asciiCam.convertBitmap(BitmapFactory.decodeByteArray(data, 0, data.length));
+		m_asciiCam.convertBitmapAsync(BitmapFactory.decodeByteArray(data, 0, data.length)
+				,new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT));
 	}
 	
 	
