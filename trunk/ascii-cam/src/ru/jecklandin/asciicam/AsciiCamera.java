@@ -124,7 +124,7 @@ public class AsciiCamera extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		 if (m_photoMode) { 
 
-			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER ||  keyCode == KeyEvent.KEYCODE_CAMERA) {
 				 m_photoMode = false;
 				 m_camera.takePicture(null, null, new PicSettingCallback(this));
 				 setContentView(m_viewer);
@@ -285,6 +285,11 @@ public class AsciiCamera extends Activity {
 	}  
 
 	private Bitmap resizeBitmap(Bitmap b, int w, int h) {
+		Bitmap b1 = Bitmap.createScaledBitmap(b, w, h , false);
+		if (AsciiCamera.s_defaultBitmap != b) {
+			b.recycle();	
+		}
+		
 //		Bitmap b1 = null;
 //		if (b.getHeight() != h || b.getWidth() != w ) {
 //			b1 = Bitmap.createScaledBitmap(b, w, h , false);	
@@ -293,7 +298,7 @@ public class AsciiCamera extends Activity {
 //			b1 = b;
 //		}
 //		return b1;
-		return Bitmap.createScaledBitmap(b, w, h , false);	
+		return b1;
 	}
 	
 	public void convert() {
@@ -373,7 +378,7 @@ public class AsciiCamera extends Activity {
 	
 	//android:clearTaskOnLaunch is set, nevertheless sometimes onCreate isn't called... 
 	//then need to restart
-	private void restartApp() {
+	void restartApp() {
 		//crapy solution :(
 		 Intent in = new Intent(this, AsciiCamera.class);
 		 onStop();
@@ -435,6 +440,10 @@ public class AsciiCamera extends Activity {
 	}
 	
 	private void reset() {
+		if (AsciiCamera.s_defaultBitmap != null) {
+			AsciiCamera.s_defaultBitmap.recycle();
+		}
+		AsciiCamera.s_defaultBitmap = null;
 		m_viewer.m_textsize = AsciiViewer.DEFAUL_FONT;
 		AsciiCamera.s_inverted = false;
 		AsciiCamera.s_grayscale = true; 

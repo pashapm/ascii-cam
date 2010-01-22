@@ -41,10 +41,15 @@ public class SlidingMenu extends Activity {
 
 	AsciiCamera.Facade m_facade;
 	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		finish();
+	}
 
-	
 	//elems
 	LinearLayout m_ly;
+	LinearLayout m_emptyLay;
 	LinearLayout m_biglay;
 	
 	SeekBar m_textSizeSeek;
@@ -110,6 +115,7 @@ public class SlidingMenu extends Activity {
         
         
         m_ly = (LinearLayout)View.inflate(this, R.layout.main, null);
+        m_emptyLay = (LinearLayout)m_ly.findViewById(R.id.LinearLayout01);
         m_biglay = (LinearLayout)m_ly.findViewById(R.id.LinearLayout02);
         
         m_views = new HashMap<String, View>();
@@ -133,6 +139,14 @@ public class SlidingMenu extends Activity {
     	m_butReset = (Button) m_ly.findViewById(R.id.Button03);
     	m_butAbout = (Button) m_ly.findViewById(R.id.Button04);
     	
+    	m_emptyLay.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				finish();
+				
+			}
+		});
     	
         m_textSizeSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			
