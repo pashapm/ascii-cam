@@ -30,6 +30,9 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         try {
         if (mCamera == null)	 {
         	mCamera = Camera.open();
+        	if (mCamera == null) {
+        		cam.restartApp();
+        	}
         	Log.d("AAAAA", "$$$$$$$$$$$$$$$$$NULL");
         }
            mCamera.setPreviewDisplay(holder);
