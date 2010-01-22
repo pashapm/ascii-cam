@@ -2,11 +2,19 @@ package ru.jecklandin.asciicam;
 
 import java.io.IOException;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.Camera;
+import android.text.Layout;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 
 

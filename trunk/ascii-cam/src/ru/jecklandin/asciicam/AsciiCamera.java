@@ -35,6 +35,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.nullwire.trace.ExceptionHandler;
@@ -107,6 +110,19 @@ public class AsciiCamera extends Activity {
         if (!f.exists())
         	f.mkdirs();
         
+
+        //add button to the content view
+        LinearLayout lay = (LinearLayout)View.inflate(this, R.layout.button, null);
+        ImageButton imb = (ImageButton) lay.findViewById(R.id.ShotButton);
+        imb.setOnClickListener(new ImageButton.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				makeShot();
+			}
+		});
+        getWindow().addContentView(lay, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT)); 
+   
         registerForContextMenu(m_viewer);
         reset();
     }  
@@ -125,10 +141,7 @@ public class AsciiCamera extends Activity {
 		 if (m_photoMode) { 
 
 			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER ||  keyCode == KeyEvent.KEYCODE_CAMERA) {
-				 m_photoMode = false;
-				 m_camera.takePicture(null, null, new PicSettingCallback(this));
-				 setContentView(m_viewer);
-				 m_camera.stopPreview(); 
+				 makeShot();
 				 return true;
 			 } else {
 				 return super.onKeyDown(keyCode, event);
@@ -162,6 +175,13 @@ public class AsciiCamera extends Activity {
 			 m_viewer.invalidate();
 		 }
 		return  super.onKeyDown(keyCode, event);
+	}
+	
+	void makeShot() {
+		m_photoMode = false;
+		m_camera.takePicture(null, null, new PicSettingCallback(this));
+		setContentView(m_viewer);
+		m_camera.stopPreview(); 
 	}
 	
     @Override
