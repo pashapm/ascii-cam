@@ -79,12 +79,12 @@ public class AsciiCamera extends Activity {
     @Override 
     public void onCreate(Bundle savedInstanceState) { 
         super.onCreate(savedInstanceState); 
-        
-        // :-|
         AsciiCamera.s_instance = this;
         
         Handler han = new Handler();
-        ExceptionHandler.register(this, "http://android-exceptions-handler.appspot.com/exception.groovy",han);
+        
+        //disabled for chinese
+        //ExceptionHandler.register(this, "http://android-exceptions-handler.appspot.com/exception.groovy",han);
         
         getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
@@ -92,8 +92,8 @@ public class AsciiCamera extends Activity {
 				android.content.Context.WINDOW_SERVICE)).getDefaultDisplay();
         AsciiCamera.s_screenHeight = disp.getHeight();
         AsciiCamera.s_screenWidth = disp.getWidth();
-        AsciiCamera.CONV_HEIGHT = AsciiCamera.s_screenHeight;//* 3 / 4;
-        AsciiCamera.CONV_WIDTH = AsciiCamera.s_screenWidth;// * 3 / 4;
+        AsciiCamera.CONV_HEIGHT = AsciiCamera.s_screenHeight;
+        AsciiCamera.CONV_WIDTH = AsciiCamera.s_screenWidth;
         
         m_viewer = new AsciiViewer(this);
         m_camera = Camera.open(); 
@@ -133,7 +133,6 @@ public class AsciiCamera extends Activity {
     		m_facade = new Facade();;
     	} 
     	return m_facade;
-    	
     }
    
 	@Override
@@ -183,40 +182,6 @@ public class AsciiCamera extends Activity {
 		setContentView(m_viewer);
 		m_camera.stopPreview(); 
 	}
-	
-    @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuItem menuitem0 = menu.add(Menu.NONE, 0, Menu.NONE, "Save");
-		menuitem0.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			
-			@Override
-			public boolean onMenuItemClick(MenuItem arg0) {
-				((AsciiViewer)m_viewer).showContextMenu(ActionMode.SAVE);
-				return false;
-			}
-		});
-		
-		MenuItem menuitem1 = menu.add(Menu.NONE, 1, Menu.NONE, "Edit");
-		menuitem1.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			
-			@Override
-			public boolean onMenuItemClick(MenuItem arg0) {
-				((AsciiViewer)m_viewer).showContextMenu(ActionMode.EDIT);
-				return false;
-			}
-		});
-
-		MenuItem menuitem2 = menu.add(Menu.NONE, 2, Menu.NONE, "About");
-		menuitem2.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-			
-			@Override
-			public boolean onMenuItemClick(MenuItem arg0) {
-				AsciiCamera.showAbout(AsciiCamera.this);
-				return false;
-			}
-		});
-		return super.onCreateOptionsMenu(menu);
-	}
     
     public static void showAbout(Context ctx) {
     	AlertDialog.Builder d = new AlertDialog.Builder(ctx);
@@ -232,24 +197,6 @@ public class AsciiCamera extends Activity {
 		menu.getItem(0).setVisible(!m_photoMode);
 		menu.getItem(1).setVisible(!m_photoMode);
 		return super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-			super.onCreateContextMenu(menu, v, menuInfo);
-			if (m_viewer.m_actionMode == ActionMode.SAVE) {
-				menu.add(0, 0, 0, "As image");
-				menu.add(0, 1, 1, "As text");
-			} else if (m_viewer.m_actionMode == ActionMode.EDIT) {
-				//menu.add(0, 2, 2, AsciiCamera.s_hiRes? "Low-res" : "Hi-res");
-				menu.add(0, 3, 3, AsciiCamera.s_grayscale ? "Black & white" : "Grayscale");
-				if (AsciiCamera.s_grayscale) {
-					menu.add(0, 4, 4, "Invert");
-				}
-				menu.add(0, 5, 5, "Reduce font size (\"Volume down\" button)");
-				menu.add(0, 6, 6, "Increase font size (\"Volume up\" button)");
-			}
 	}
 
 	@Override
@@ -305,6 +252,10 @@ public class AsciiCamera extends Activity {
 	}  
 
 	private Bitmap resizeBitmap(Bitmap b, int w, int h) {
+		if (b == null) {  //strange error
+			restartApp();
+		}
+		
 		Bitmap b1 = Bitmap.createScaledBitmap(b, w, h , false);
 		if (AsciiCamera.s_defaultBitmap != b) {
 			b.recycle();	
@@ -360,7 +311,9 @@ public class AsciiCamera extends Activity {
 		Date d = Calendar.getInstance().getTime();
 		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
 		m_viewer.savePicture(fname);
-		Toast.makeText(AsciiCamera.this, fname+".png saved to "+AsciiCamera.SAVE_DIR, 1000).show();
+		Toast.makeText(AsciiCamera.this, fname+".png " + 
+				getString(R.string.savedto) + " " +
+				AsciiCamera.SAVE_DIR, 1000).show();
 	}
 	 
 	void saveText() {
@@ -380,7 +333,9 @@ public class AsciiCamera extends Activity {
 				buf.append("\n");
 			}
 			fw.write(buf.toString());
-			Toast.makeText(AsciiCamera.this, fname+".txt saved to "+AsciiCamera.SAVE_DIR, 1000).show();
+			Toast.makeText(AsciiCamera.this, fname+".txt " + 
+					getString(R.string.savedto) + " " +
+					AsciiCamera.SAVE_DIR, 1000).show();
 		}catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -460,10 +415,6 @@ public class AsciiCamera extends Activity {
 	}
 	
 	private void reset() {
-		if (AsciiCamera.s_defaultBitmap != null) {
-			AsciiCamera.s_defaultBitmap.recycle();
-		}
-		AsciiCamera.s_defaultBitmap = null;
 		m_viewer.m_textsize = AsciiViewer.DEFAUL_FONT;
 		AsciiCamera.s_inverted = false;
 		AsciiCamera.s_grayscale = true; 
@@ -471,6 +422,7 @@ public class AsciiCamera extends Activity {
 		AsciiCamera.s_bitmapSize = new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT);
 		AsciiCamera.s_availableSizes = getResolutions();
 		m_viewer.reset();
+		m_viewer.resetTextSize();
 	}
 	
 	BitmapSize[] getResolutions() {
@@ -581,7 +533,7 @@ public class AsciiCamera extends Activity {
 			AsciiCamera.this.reset();
 			AsciiCamera.this.convert();
 		}
-		
+		 
 		public int getTextSize() {
 			return m_viewer.m_textsize - 4;
 		}

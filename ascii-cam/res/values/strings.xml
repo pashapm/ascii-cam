@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Ascii!</string>
+    
     <string name="app_name">AsciiCamera</string>
+    <string name="save">Save as </string>
+    <string name="edit">Edit</string>
+    <string name="about">About</string>
+    <string name="lowres">Low-res</string>
+    <string name="hires">Hi-res</string>
+    <string name="bw">B and W</string>
+    <string name="grayscale">Grayscale</string>
+    <string name="reducefont">Reduce (\"Volume down\" button)</string>
+    <string name="increasefont">Increase (\"Volume up\" button)</string>
+    <string name="savedto">was saved to</string>
+    <string name="astext">Text</string>
+    <string name="aspicture">Picture</string>
+    <string name="invert">Invert</string> 
+    
     <string name="unmount">Please unmount sdcard to save the file</string>
+    <string name="imsize">Image size</string>
+    <string name="reset">Reset</string>
+    <string name="saveaspic">Save as picture</string>
+    <string name="saveastext">Save as text</string>
+    <string name="resizing">Resizing the picture...</string>
+    <string name="processing">Asciization</string>
+    
+    
+    
 </resources>

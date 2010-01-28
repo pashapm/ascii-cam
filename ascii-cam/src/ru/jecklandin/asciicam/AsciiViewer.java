@@ -35,8 +35,16 @@ class AsciiViewer extends ImageView {
 	float m_waitProgress = 0;
 	
 	
+	/**
+	 * text values
+	 */
+	private String RESIZING;
+	private String ASCIIZATION;
+	
 	AsciiViewer(Context context) {
 		super(context);
+		RESIZING = context.getString(R.string.resizing);
+		ASCIIZATION = context.getString(R.string.processing);
 	}
 
 	private String m_fname;
@@ -70,7 +78,7 @@ class AsciiViewer extends ImageView {
 			canvas = canvas2;
 		}
 		canvas.setMatrix(m_matrix);
-			
+			 
 		if (AsciiCamera.s_inverted) {
 			canvas.drawARGB(255, 255, 255, 255);
 		} else {
@@ -89,7 +97,7 @@ class AsciiViewer extends ImageView {
 //			canvas.drawText("Asciization "+(int)(m_waitProgress*100)+"%", 
 //				   canvas.getWidth()/2 - p.measureText("Asciization 99%")/2, //sample text size
 //				   canvas.getHeight()/2, p);
-			canvas.drawText("Asciization "+(int)(m_waitProgress*100)+"%", 20, 20, p);
+			canvas.drawText(ASCIIZATION+" "+(int)(m_waitProgress*100)+"%", 20, 20, p);
 		} else if (m_text==null) {
 			m_matrix.reset();
 			canvas.setMatrix(m_matrix);
@@ -97,7 +105,7 @@ class AsciiViewer extends ImageView {
 //			canvas.drawText("Resizing the picture...", 
 //					   canvas.getWidth()/2 - p.measureText("Resizing the picture...")/2, //sample text size
 //					   canvas.getHeight()/2, p);
-			canvas.drawText("Resizing the picture...", 20, 20, p);
+			canvas.drawText(RESIZING, 20, 20, p);
 		}
 		
 		if (m_savePic && !m_wait) {
@@ -152,6 +160,9 @@ class AsciiViewer extends ImageView {
 	void reset() {
 		m_shiftX = 0;
 		m_shiftY = 0;
+	}
+	
+	void resetTextSize() {
 		m_textsize = AsciiViewer.DEFAUL_FONT; 
 	}
 	
