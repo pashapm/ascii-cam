@@ -84,7 +84,7 @@ public class AsciiCamera extends Activity {
         Handler han = new Handler();
         
         //disabled for chinese
-        //ExceptionHandler.register(this, "http://android-exceptions-handler.appspot.com/exception.groovy",han);
+        ExceptionHandler.register(this, "http://android-exceptions-handler.appspot.com/exception.groovy",han);
         
         getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
@@ -142,9 +142,7 @@ public class AsciiCamera extends Activity {
 			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER ||  keyCode == KeyEvent.KEYCODE_CAMERA) {
 				 makeShot();
 				 return true;
-			 } else {
-				 return super.onKeyDown(keyCode, event);
-			 }  
+			 } 
 		 } else {
 			 if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_BACK) {
 				 m_photoMode = true;
@@ -194,8 +192,8 @@ public class AsciiCamera extends Activity {
     
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.getItem(0).setVisible(!m_photoMode);
-		menu.getItem(1).setVisible(!m_photoMode);
+//		menu.getItem(0).setVisible(!m_photoMode);
+//		menu.getItem(1).setVisible(!m_photoMode);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
