@@ -15,6 +15,7 @@
     <string name="astext">文字</string>
     <string name="aspicture">圖片</string>
     <string name="invert">交換</string> 
+    
     <string name="unmount">請解除安裝 SD 卡來儲存檔案此檔案</string>
     <string name="imsize">影像尺寸</string>
     <string name="reset">重設</string>
