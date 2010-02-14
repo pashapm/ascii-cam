@@ -6,9 +6,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-
-import ru.jecklandin.asciicam.AsciiTools.QUALITY;
-
 import android.R.anim;
 import android.app.Activity;
 import android.content.Context;
@@ -56,7 +53,8 @@ public class SlidingMenu extends Activity {
 	CheckBox m_checkInvert;
 	Spinner m_imsizeSpinner;
 	RadioButton m_gsRadio;
-	RadioButton m_bwRadio;
+	RadioButton m_colRadio;
+	CheckBox m_bwCheck;
 	Spinner m_quaSpinner;
 	Button m_butPic;
 	Button m_butText;
@@ -73,6 +71,7 @@ public class SlidingMenu extends Activity {
 	
 	@Override
 	protected void onStart() {
+		m_ly.startAnimation(m_appearAnimation);
 		m_mayAction = false;
 		
 		m_textSizeSeek.setProgress(m_facade.getTextSize()*10);
@@ -85,16 +84,13 @@ public class SlidingMenu extends Activity {
 			}
 		}
 
-		m_quaSpinner.setSelection(AsciiCamera.s_quality.ordinal());
-		
 		if (AsciiCamera.s_grayscale) {
 			m_gsRadio.setChecked(true);  
 		} else {
-			m_bwRadio.setChecked(true);
+			m_colRadio.setChecked(true);
 		}
 		
 		m_checkInvert.setChecked(AsciiCamera.s_inverted);
-		
 		
 		m_mayAction = true;
 		super.onStart();
@@ -132,7 +128,8 @@ public class SlidingMenu extends Activity {
         m_textSizeSeek = (SeekBar) m_ly.findViewById(R.id.SeekBar01);
     	m_imsizeSpinner = (Spinner) m_ly.findViewById(R.id.Spinner01);
     	m_gsRadio = (RadioButton) m_ly.findViewById(R.id.RadioButton01);
-    	m_bwRadio = (RadioButton) m_ly.findViewById(R.id.RadioButton02);
+    	m_colRadio = (RadioButton) m_ly.findViewById(R.id.colorize);
+    	m_bwCheck = (CheckBox) m_ly.findViewById(R.id.CheckBox02);
     	m_quaSpinner = (Spinner) m_ly.findViewById(R.id.Spinner02);
     	m_butPic = (Button) m_ly.findViewById(R.id.Button01);
     	m_butText = (Button) m_ly.findViewById(R.id.Button02);
@@ -160,8 +157,7 @@ public class SlidingMenu extends Activity {
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
 				m_biglay.setBackgroundColor(Color.parseColor("#88ffffff"));
-				SlidingMenu.this.makeOthersTransparent("sliderlayout");
-				
+				//SlidingMenu.this.makeOthersTransparent("sliderlayout");
 			}
 			
 			@Override
@@ -180,13 +176,31 @@ public class SlidingMenu extends Activity {
 		});
         
         m_gsRadio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				SlidingMenu.this.m_facade.setGrayscale(isChecked);
+				if (isChecked) {
+					m_bwCheck.setEnabled(true);
+					m_checkInvert.setEnabled(true);
+					m_butText.setEnabled(true);
+				}
 			}
 		});
         
+        m_colRadio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				SlidingMenu.this.m_facade.setColorized(isChecked);
+				if (isChecked) {
+					m_bwCheck.setEnabled(false);
+					m_checkInvert.setEnabled(false);
+					m_butText.setEnabled(false);
+				}
+			}
+		});
+        
+                
         m_imsizeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
@@ -198,29 +212,11 @@ public class SlidingMenu extends Activity {
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {}
 		});
-        
-        m_quaSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-					m_facade.setQuality(QUALITY.values()[arg2]);
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {}
-		});
-       
-        
         ArrayAdapter<BitmapSize> imsize_adapter = 
         	new ArrayAdapter<BitmapSize>(this, android.R.layout.simple_spinner_item, 
         	m_facade.getAvailableSizes());
         m_imsizeSpinner.setAdapter(imsize_adapter);
-        
-        ArrayAdapter<QUALITY> qua_adapter = 
-        	new ArrayAdapter<QUALITY>(this, android.R.layout.simple_spinner_item, 
-        	QUALITY.values());
-        m_quaSpinner.setAdapter(qua_adapter);
         
         m_butPic.setOnClickListener(new OnClickListener() {
 			

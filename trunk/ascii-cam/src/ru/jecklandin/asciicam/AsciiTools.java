@@ -14,8 +14,6 @@ import android.util.Log;
 
 public class AsciiTools {
 
-	public enum QUALITY {LOW, MEDIUM, HIGH};
-	
 	static Map<Integer, String> symbolsMap = new HashMap<Integer, String>() {{
 		put(0, " ");
 		put(1, ".");
@@ -49,21 +47,25 @@ public class AsciiTools {
 		put(15, "@");
 	}};
 	
+	public static ColoredValue[][] convertColorBitmap(Bitmap b, ProgressCallback progressCallback) {
+		int sq_size = 4;
+		int sq_width = b.getWidth()/sq_size; 
+		int sq_height = b.getHeight()/sq_size;
+		ColoredValue[][] symbols = new ColoredValue[sq_width][sq_height];
+		
+		for (int i=0; i<sq_width; i++) {
+			for (int j=0; j<sq_height; j++) {
+				symbols[i][j] = (AsciiTools.getColoredValue(b, i, j, sq_size));
+			}
+			if (progressCallback!=null && i%5==0) {
+				progressCallback.update(((float)i)/((float)(sq_width-1)));
+			}
+		}
+		return symbols;
+	}
+	
 	public static String[] convertBitmap(Bitmap b, ProgressCallback progressCallback) {
 		int sq_size = 3;
-		switch (AsciiCamera.s_quality) {
-		case LOW:
-			sq_size = 4;
-			break;
-		case MEDIUM:
-			sq_size = 3;
-			break;
-		case HIGH:
-			sq_size = 2;
-		default:
-			break;
-		};
-
 		int sq_width = b.getWidth()/sq_size; 
 		int sq_height = b.getHeight()/sq_size;
 		int[][] symbols = new int[sq_width][sq_height];
@@ -95,6 +97,17 @@ public class AsciiTools {
 			ret[i] = buf.toString();
 		}
 		return ret;
+	}
+	
+	private static ColoredValue getColoredValue(Bitmap bm, int x, int y, int sq_size) {
+		float hsv[] = new float[3];
+		int color = bm.getPixel(x*sq_size+sq_size/2, y*sq_size+sq_size/2);
+		ColoredValue val = new ColoredValue();
+		val.color = color;
+		Color.colorToHSV(color, hsv);
+		val.value = hsv[2]*10;
+		val.symbol = AsciiTools.symbolsMap.get((int)val.value);
+		return val;	
 	}
 	
 	private static float getAverageValue(Bitmap bm, int x, int y, int sq_size) {
@@ -135,4 +148,10 @@ public class AsciiTools {
 	}
 	
 		
+}
+
+class ColoredValue {
+	float value;
+	int color;
+	String symbol;
 }

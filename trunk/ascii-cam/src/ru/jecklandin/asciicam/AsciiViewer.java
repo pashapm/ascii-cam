@@ -24,6 +24,8 @@ class AsciiViewer extends ImageView {
 	
 	Bitmap m_bitmap;
 	String[] m_text;
+	ColoredValue[][] m_coloredText;
+	
 	int m_textsize = AsciiViewer.DEFAUL_FONT;
 	
 	Matrix m_matrix = new Matrix();
@@ -63,11 +65,14 @@ class AsciiViewer extends ImageView {
 		Paint p = new Paint();
 		p.setTextSize(m_textsize);
 		p.setTypeface(Typeface.MONOSPACE);
-		p.setColor(AsciiCamera.s_inverted ? Color.BLACK : Color.WHITE);
+		p.setColor( (AsciiCamera.s_inverted && !AsciiCamera.s_colorized) 
+					 ? Color.BLACK : Color.WHITE);
 		
 		m_matrix.reset();
-		m_matrix.setRotate(-90,0,0);
-		m_matrix.postTranslate(0, AsciiCamera.s_screenHeight);
+		if (m_text!=null && AsciiCamera.s_grayscale) {
+			m_matrix.setRotate(-90,0,0);
+			m_matrix.postTranslate(0, AsciiCamera.s_screenHeight);	
+		}
 		m_matrix.postTranslate(m_shiftX, m_shiftY);
 		
 		Canvas canvas2 = null;
@@ -79,32 +84,38 @@ class AsciiViewer extends ImageView {
 		}
 		canvas.setMatrix(m_matrix);
 			 
-		if (AsciiCamera.s_inverted) {
+		if (AsciiCamera.s_inverted && !AsciiCamera.s_colorized) {
 			canvas.drawARGB(255, 255, 255, 255);
 		} else {
 			canvas.drawARGB(255, 0, 0, 0);
 		}
 	
-		if (m_text!=null && !m_wait) {
+		//Grayscale text
+		if (AsciiCamera.s_grayscale && m_text!=null && !m_wait) {
 			for (int i=0; i<m_text.length; ++i)
 				canvas.drawText(m_text[i], 0, (float) ((m_textsize-2)*i), p);	
 		}	
+		
+		
+		//Colorized text
+		if (AsciiCamera.s_colorized && m_coloredText != null && !m_wait) {
+			for (int i=0; i<m_coloredText.length; ++i) 
+				for (int j=0; j<m_coloredText[i].length; ++j) {
+					p.setColor(m_coloredText[i][j].color);
+					canvas.drawText(m_coloredText[i][j].symbol,  (float) ((m_textsize-2)*i),  (float) ((m_textsize-2)*j), p);
+				}
+		}
 	
+		
+		m_matrix.setRotate(-90,0,0);
+		m_matrix.postTranslate(0, AsciiCamera.s_screenHeight);	
+		m_matrix.postTranslate(m_shiftX, m_shiftY);
+		canvas.setMatrix(m_matrix);
 		if (m_wait) {
-			m_matrix.reset();
-			canvas.setMatrix(m_matrix);
 			p.setTextSize(17);
-//			canvas.drawText("Asciization "+(int)(m_waitProgress*100)+"%", 
-//				   canvas.getWidth()/2 - p.measureText("Asciization 99%")/2, //sample text size
-//				   canvas.getHeight()/2, p);
 			canvas.drawText(ASCIIZATION+" "+(int)(m_waitProgress*100)+"%", 20, 20, p);
-		} else if (m_text==null) {
-			m_matrix.reset();
-			canvas.setMatrix(m_matrix);
+		} else if (m_text==null && m_coloredText == null) { //initial paint
 			p.setTextSize(17);
-//			canvas.drawText("Resizing the picture...", 
-//					   canvas.getWidth()/2 - p.measureText("Resizing the picture...")/2, //sample text size
-//					   canvas.getHeight()/2, p);
 			canvas.drawText(RESIZING, 20, 20, p);
 		}
 		

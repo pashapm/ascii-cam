@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import ru.jecklandin.asciicam.AsciiTools.QUALITY;
 import ru.jecklandin.asciicam.AsciiViewer.ActionMode;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -58,7 +57,7 @@ public class AsciiCamera extends Activity {
 	
 	static boolean s_inverted;
 	static boolean s_grayscale; 
-	static AsciiTools.QUALITY s_quality;
+	static boolean s_colorized; 
 	
 	static Bitmap s_defaultBitmap;
 	
@@ -76,7 +75,7 @@ public class AsciiCamera extends Activity {
 	public static AsciiCamera s_instance;
 		
 	/** Called when the activity is first created. */ 
-    @Override 
+    @Override     
     public void onCreate(Bundle savedInstanceState) { 
         super.onCreate(savedInstanceState); 
         AsciiCamera.s_instance = this;
@@ -226,12 +225,19 @@ public class AsciiCamera extends Activity {
 		return true;
 	}
     
+	protected void colorize(boolean col) {
+		m_viewer.reset();
+		AsciiCamera.s_colorized = col;
+		AsciiCamera.s_grayscale = !col;
+	}
+	
     protected void flipGrayscale() {
     	m_viewer.reset();
 		AsciiCamera.s_grayscale =! AsciiCamera.s_grayscale;
-		AsciiCamera.s_inverted = false;
+		//AsciiCamera.s_inverted = false;
 	}
-
+    
+    
 	protected void invert() {
 		m_viewer.reset();
     	AsciiCamera.s_inverted =! AsciiCamera.s_inverted;
@@ -296,9 +302,15 @@ public class AsciiCamera extends Activity {
 	 * Async. convert the given bitmap
 	 */
 	void convertBitmapAsync(Bitmap b, BitmapSize size) {
-		(new ConvertingAsyncTask())
+		if (AsciiCamera.s_colorized) {
+			(new ConvertingColoredAsyncTask())
 			.setSize(size.m_w, size.m_h)
 			.execute(b);
+		} else {
+			(new ConvertingAsyncTask())
+			.setSize(size.m_w, size.m_h)
+			.execute(b);
+		}
 	}
 
 	void savePicture() {
@@ -416,7 +428,7 @@ public class AsciiCamera extends Activity {
 		m_viewer.m_textsize = AsciiViewer.DEFAUL_FONT;
 		AsciiCamera.s_inverted = false;
 		AsciiCamera.s_grayscale = true; 
-		AsciiCamera.s_quality = QUALITY.LOW;
+		AsciiCamera.s_colorized = false;
 		AsciiCamera.s_bitmapSize = new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT);
 		AsciiCamera.s_availableSizes = getResolutions();
 		m_viewer.reset();
@@ -493,6 +505,57 @@ public class AsciiCamera extends Activity {
 		}
 	}
 	
+	class ConvertingColoredAsyncTask extends AsyncTask<Bitmap, Float, ColoredValue[][]> implements ProgressCallback {
+		private int s_w;
+		private int s_h;
+		
+		protected ConvertingColoredAsyncTask setSize(int w, int h) {
+			s_w = w;
+			s_h = h;
+			return this;
+		}
+		
+        @Override
+		protected void onProgressUpdate(Float... values) {
+        	m_viewer.m_waitProgress = values[0];
+        	m_viewer.postInvalidate();
+ 		}
+
+		@Override
+        protected void onPreExecute() {
+			m_viewer.setWaiting(true);
+        } 
+		
+		@Override 
+		protected void onPostExecute(ColoredValue[][] result) {
+			m_viewer.m_coloredText = result;
+			m_viewer.setWaiting(false);
+			m_viewer.postInvalidate();
+			AsciiCamera.s_bitmapSize = new BitmapSize(s_w, s_h);
+		}
+
+		@Override
+		protected ColoredValue[][] doInBackground(Bitmap... params) {
+			Bitmap b1;
+			if (s_w == AsciiCamera.CONV_WIDTH && s_h == AsciiCamera.CONV_HEIGHT) {
+				if (AsciiCamera.s_defaultBitmap == null)  {
+					AsciiCamera.s_defaultBitmap = resizeBitmap(params[0], s_w, s_h);
+				}
+				b1 = AsciiCamera.s_defaultBitmap;
+			} else {
+				b1 = resizeBitmap(params[0], s_w, s_h);
+			}
+			m_viewer.m_bitmap = b1;
+			return AsciiTools.convertColorBitmap(b1, this);	
+		}
+		
+		@Override
+		public void update(Float f) {
+			publishProgress(f);
+		}
+
+	}
+	
 	class Facade  {
 		
 		public void setTextSize(int ts) {
@@ -506,13 +569,6 @@ public class AsciiCamera extends Activity {
 			}
 		}
 		
-		public void setQuality(AsciiTools.QUALITY qua) {
-			if (qua != AsciiCamera.s_quality) {
-				AsciiCamera.s_quality = qua;
-				convert();
-			}
-		}
-		
 		public void setImageSize(BitmapSize bm) {
 			if (! bm.equals(AsciiCamera.s_bitmapSize)) {
 				AsciiCamera.s_bitmapSize = bm;
@@ -523,6 +579,13 @@ public class AsciiCamera extends Activity {
 		public void setGrayscale(boolean gs) {
 			if (gs != AsciiCamera.s_grayscale) {
 				flipGrayscale();
+				convert();
+			}
+		}
+		
+		public void setColorized(boolean col) {
+			if (AsciiCamera.s_colorized != col) {
+				AsciiCamera.this.colorize(col);
 				convert();
 			}
 		}
@@ -554,10 +617,6 @@ public class AsciiCamera extends Activity {
 		
 		public int getCurrentHeight() {
 			return AsciiCamera.s_bitmapSize.m_h;
-		}
-		
-		public QUALITY getQuality() {
-			return AsciiCamera.s_quality;
 		}
 		
 		public void saveText() {
