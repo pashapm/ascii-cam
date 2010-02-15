@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" android:orientation="horizontal">
 
-<LinearLayout android:id="@+id/LinearLayout01" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="1" android:orientation="horizontal" android:background="#00ff0000">
+<LinearLayout android:id="@+id/LinearLayout01" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="horizontal" android:background="#00ff0000" android:layout_weight="1.2">
 
 </LinearLayout>
 <LinearLayout android:id="@+id/LinearLayout02" android:layout_width="fill_parent" android:orientation="vertical" android:layout_weight="1" android:layout_height="fill_parent" android:background="#00ffffff">
@@ -35,7 +35,7 @@
 <LinearLayout android:id="@+id/LinearLayout09" android:layout_weight="1" android:orientation="horizontal" android:background="#cccccc" android:layout_height="wrap_content" android:layout_width="fill_parent">
 
 
-<Button android:id="@+id/Button03" android:layout_weight="1" android:textSize="12sp" android:layout_width="wrap_content" android:layout_gravity="center" android:typeface="monospace" android:text="@string/reset" android:layout_height="fill_parent"></Button><Button android:id="@+id/Button04" android:layout_weight="1" android:layout_width="wrap_content" android:typeface="monospace" android:textSize="12sp" android:layout_gravity="center" android:text="@string/about" android:layout_height="fill_parent"></Button>
+<Button android:id="@+id/Button03" android:layout_weight="1" android:textSize="12sp" android:layout_gravity="center" android:typeface="monospace" android:text="@string/reset" android:layout_height="fill_parent" android:layout_width="fill_parent"></Button><Button android:id="@+id/Button04" android:layout_weight="1" android:typeface="monospace" android:textSize="12sp" android:layout_gravity="center" android:text="@string/about" android:layout_height="fill_parent" android:layout_width="fill_parent"></Button>
 </LinearLayout><ViewFlipper android:id="@+id/ViewFlipper01" android:layout_height="wrap_content" android:layout_width="fill_parent"><LinearLayout android:id="@+id/LinearLayout05" android:layout_weight="1" android:layout_height="wrap_content" android:background="#eeeeee" android:layout_width="fill_parent"><Button android:id="@+id/Button01" android:layout_gravity="center" android:layout_width="fill_parent" android:layout_weight="1" android:typeface="monospace" android:textSize="12sp" android:text="@string/saveaspic" android:layout_height="fill_parent"></Button>
 <Button android:id="@+id/Button02" android:layout_width="fill_parent" android:layout_weight="1" android:typeface="monospace" android:layout_gravity="center" android:textSize="12sp" android:layout_height="wrap_content" android:text="@string/saveastext"></Button>
 
