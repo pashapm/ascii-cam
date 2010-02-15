@@ -61,7 +61,7 @@ public class AsciiCamera extends Activity {
 	
 	static Bitmap s_defaultBitmap;
 	
-	public static String SAVE_DIR = "/sdcard/DCIM/asciicamera/";
+	public static String SAVE_DIR = "/sdcard/asciicamera/";
 	
 	Camera m_camera;
 	AsciiViewer m_viewer;
@@ -69,8 +69,8 @@ public class AsciiCamera extends Activity {
 	boolean m_photoMode = true;
 	PicPreviewCallback m_prCallback = new PicPreviewCallback();
 	private Facade m_facade; 
-	
-	private static String s_aboutString = "© Evgeny Balandin, 2010 \n balandin.evgeny@gmail.com";
+	  
+	private static String s_aboutString = "© Evgeny Balandin, 2010 \nbalandin.evgeny@gmail.com";
 	
 	public static AsciiCamera s_instance;
 		
@@ -128,7 +128,7 @@ public class AsciiCamera extends Activity {
     
     public Facade getFacade() {
     	//TODO INNER CLASSES
-    	if (m_facade == null) {
+    	if (m_facade == null) { 
     		m_facade = new Facade();;
     	} 
     	return m_facade;
@@ -183,7 +183,7 @@ public class AsciiCamera extends Activity {
     public static void showAbout(Context ctx) {
     	AlertDialog.Builder d = new AlertDialog.Builder(ctx);
 		d.setIcon(R.drawable.icon);
-		d.setMessage(AsciiCamera.s_aboutString);
+		d.setMessage(AsciiCamera.s_aboutString + "\n\n" + ctx.getString(R.string.credits));
 		d.setTitle(ctx.getResources().getString(R.string.app_name));
 		d.create();
 		d.show();
@@ -321,9 +321,7 @@ public class AsciiCamera extends Activity {
 		Date d = Calendar.getInstance().getTime();
 		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
 		m_viewer.savePicture(fname);
-		Toast.makeText(AsciiCamera.this, fname+".png " + 
-				getString(R.string.savedto) + " " +
-				AsciiCamera.SAVE_DIR, 1000).show();
+		
 	}
 	 
 	void saveText() {
@@ -380,6 +378,9 @@ public class AsciiCamera extends Activity {
 		try {
 			fos = new FileOutputStream(AsciiCamera.SAVE_DIR + fname + ".png");
 			b.compress(CompressFormat.PNG, 100, fos);
+			Toast.makeText(AsciiCamera.s_instance, fname+".png " + 
+					AsciiCamera.s_instance.getString(R.string.savedto) + " " +
+					AsciiCamera.SAVE_DIR, 1000).show();
 			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
