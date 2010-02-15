@@ -23,7 +23,7 @@
     <string name="saveastext">Save as text</string>
     <string name="resizing">Resizing the picture...</string>
     <string name="processing">Asciization</string>
-    
+    <string name="colorize">Colorized</string>
     
     
 </resources>
