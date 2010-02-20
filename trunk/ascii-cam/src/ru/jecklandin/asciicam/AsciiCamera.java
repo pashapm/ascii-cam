@@ -5,11 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
-import ru.jecklandin.asciicam.AsciiViewer.ActionMode;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -23,8 +22,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,8 +29,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -61,7 +56,7 @@ public class AsciiCamera extends Activity {
 	
 	static Bitmap s_defaultBitmap;
 	
-	public static String SAVE_DIR = "/sdcard/asciicamera/";
+	public static String SAVE_DIR = "/sdcard/DCIM/asciicamera/";
 	
 	Camera m_camera;
 	AsciiViewer m_viewer;
@@ -323,7 +318,66 @@ public class AsciiCamera extends Activity {
 		m_viewer.savePicture(fname);
 		
 	}
-	 
+	
+	private String getGrayscaleText() {
+		if (m_viewer.m_text == null) {
+			return "";
+		}
+		StringBuffer buf = new StringBuffer();
+		for (String s : m_viewer.m_text) {
+			buf.append(s);
+			buf.append("\n");
+		}
+		return buf.toString();
+	}
+	
+	private String getColorizedText() {
+		if (m_viewer.m_coloredText == null) {
+			return "";
+		}
+		
+		StringBuffer buf = new StringBuffer();
+        try {
+            InputStream is = getAssets().open("htmlbeg");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String text = new String(buffer);
+            buf.append(text);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+		
+		
+		for (int i=0; i<m_viewer.m_coloredText.length; ++i)  {
+			for (int j=m_viewer.m_coloredText[i].length-1; j>0; --j) {
+				ColoredValue cv = m_viewer.m_coloredText[i][j];
+				Integer in = new Integer(cv.color);
+			    buf.append("<font color=\"#");
+			    buf.append(Integer.toHexString(in).substring(2));
+			    buf.append("\">");
+			    buf.append(cv.symbol);
+			    buf.append("</font>");
+			}
+			buf.append("<br>");
+		}
+		
+		try {
+            InputStream is = getAssets().open("htmlend");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String text = new String(buffer);
+            buf.append(text);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+		
+		return buf.toString();
+	}
+	
 	void saveText() {
 		if (AsciiCamera.isCardMounted()) {
 			Toast.makeText(this, getString(R.string.unmount),Toast.LENGTH_SHORT).show();
@@ -333,15 +387,14 @@ public class AsciiCamera extends Activity {
 		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
     	FileWriter fw = null;
 		try {
-			fw = new FileWriter(AsciiCamera.SAVE_DIR + fname + ".txt");
-			StringBuffer buf = new StringBuffer();
+			fw = new FileWriter(AsciiCamera.SAVE_DIR + fname 
+					+ (AsciiCamera.s_colorized ? ".html" : ".txt"));
+			fw.write( AsciiCamera.s_colorized ? 
+					getColorizedText() : 
+					getGrayscaleText());
 			
-			for (String s : m_viewer.m_text) {
-				buf.append(s);
-				buf.append("\n");
-			}
-			fw.write(buf.toString());
-			Toast.makeText(AsciiCamera.this, fname+".txt " + 
+			Toast.makeText(AsciiCamera.this, fname + 
+					(AsciiCamera.s_colorized ? ".html " : ".txt ") + 
 					getString(R.string.savedto) + " " +
 					AsciiCamera.SAVE_DIR, 1000).show();
 		}catch (FileNotFoundException e) {
@@ -428,8 +481,8 @@ public class AsciiCamera extends Activity {
 	private void reset() {
 		m_viewer.m_textsize = AsciiViewer.DEFAUL_FONT;
 		AsciiCamera.s_inverted = false;
-		AsciiCamera.s_grayscale = true; 
-		AsciiCamera.s_colorized = false;
+		AsciiCamera.s_grayscale = false; 
+		AsciiCamera.s_colorized = true;
 		AsciiCamera.s_bitmapSize = new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT);
 		AsciiCamera.s_availableSizes = getResolutions();
 		m_viewer.reset();
