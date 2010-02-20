@@ -182,7 +182,7 @@ public class SlidingMenu extends Activity {
 				if (isChecked) {
 					m_bwCheck.setEnabled(true);
 					m_checkInvert.setEnabled(true);
-					m_butText.setEnabled(true);
+					m_butText.setText(R.string.saveastext);
 				}
 			}
 		});
@@ -195,7 +195,7 @@ public class SlidingMenu extends Activity {
 				if (isChecked) {
 					m_bwCheck.setEnabled(false);
 					m_checkInvert.setEnabled(false);
-					m_butText.setEnabled(false);
+					m_butText.setText(R.string.saveashtml);
 				}
 			}
 		});

@@ -13,10 +13,11 @@
     <string name="reset">Сброс</string>
     <string name="saveaspic">Сохранить как рисунок</string>
     <string name="saveastext">Сохранить как текст</string>
+    <string name="saveashtml">Сохранить как HTML</string>
     <string name="resizing">Подготовка...</string>
     <string name="processing">Обработка</string>
     <string name="colorize">Цветной</string> 
     
-    <string name="credits">Благодарности: \n Juho Mikkonen за перевод на финский</string>
+    <string name="credits"> </string>
     
 </resources>

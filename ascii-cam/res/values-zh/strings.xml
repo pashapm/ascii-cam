@@ -24,4 +24,5 @@
     <string name="resizing">正在调整图像大小...</string>
     <string name="processing">处理</string>
     
+    <string name="credits"> </string>
 </resources>
