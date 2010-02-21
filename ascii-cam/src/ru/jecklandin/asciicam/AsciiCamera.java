@@ -32,6 +32,8 @@ import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nullwire.trace.ExceptionHandler;
@@ -106,8 +108,10 @@ public class AsciiCamera extends Activity {
         
 
         //add button to the content view
-        LinearLayout lay = (LinearLayout)View.inflate(this, R.layout.button, null);
+        RelativeLayout lay = (RelativeLayout)View.inflate(this, R.layout.relbutton, null);
         ImageButton imb = (ImageButton) lay.findViewById(R.id.ShotButton);
+        TextView warn = (TextView) lay.findViewById(R.id.warning);
+        warn.setVisibility( AsciiCamera.isCardMounted() ? View.VISIBLE : View.GONE);
         imb.setOnClickListener(new ImageButton.OnClickListener() {
 			
 			@Override
@@ -353,11 +357,19 @@ public class AsciiCamera extends Activity {
 		for (int i=0; i<m_viewer.m_coloredText.length; ++i)  {
 			for (int j=m_viewer.m_coloredText[i].length-1; j>0; --j) {
 				ColoredValue cv = m_viewer.m_coloredText[i][j];
+				
 				Integer in = new Integer(cv.color);
+				String symbol = cv.symbol;
+				
 			    buf.append("<font color=\"#");
-			    buf.append(Integer.toHexString(in).substring(2));
+			    if (!symbol.equals(" ")) {
+			    	 buf.append(Integer.toHexString(in).substring(2));
+			    } else {
+			    	 buf.append("000");
+			    }
+			   
 			    buf.append("\">");
-			    buf.append(cv.symbol);
+			    buf.append(symbol.equals(" ") ? "0" : symbol);
 			    buf.append("</font>");
 			}
 			buf.append("<br>");

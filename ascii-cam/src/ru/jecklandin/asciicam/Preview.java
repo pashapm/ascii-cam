@@ -41,7 +41,6 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         	if (mCamera == null) {
         		cam.restartApp();
         	}
-        	Log.d("AAAAA", "$$$$$$$$$$$$$$$$$NULL");
         }
            mCamera.setPreviewDisplay(holder);
         } catch (IOException exception) {
@@ -69,8 +68,6 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 
 	public static void setcamOpen(boolean b) {
 		camOpen = b;
-		Log.d("%%%%%%", "CAM OPEN %%%%%%%%%%%%%%%%%^^^^^^");
-		
 	}
 
 }
