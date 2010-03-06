@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 
+import ru.jecklandin.asciicam.PromptDialog.PromptDialogCallback;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -332,7 +334,7 @@ public class AsciiCamera extends Activity {
 			return;
 		}
 		Date d = Calendar.getInstance().getTime();
-		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
+		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds()+".png";
 		m_viewer.savePicture(fname);
 		
 	}
@@ -404,25 +406,42 @@ public class AsciiCamera extends Activity {
 		return buf.toString();
 	}
 	
-	
-	
-	void saveText() {
+	private void saveText() {
 		if (AsciiCamera.isCardMounted()) {
 			Toast.makeText(this, getString(R.string.unmount),Toast.LENGTH_SHORT).show();
 			return;
 		}
+		
 		Date d = Calendar.getInstance().getTime();
-		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds();
+		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds() + 
+			(AsciiCamera.s_colorized ? ".html" : ".txt");
+		
+		PromptDialog.prompt(fname, new PromptDialogCallback() {
+			
+			@Override
+			public void ok(String s) {
+				processSavingText(s);
+				Intent i = new Intent(AsciiCamera.this, SlidingMenu.class);
+				startActivity(i); 
+			}
+
+			@Override
+			public void cancel() {
+				Intent i = new Intent(AsciiCamera.this, SlidingMenu.class);
+				startActivity(i); 
+			}
+		}, this);
+	}
+	
+	void processSavingText(String fname) {
     	FileWriter fw = null;
 		try {
-			fw = new FileWriter(AsciiCamera.SAVE_DIR + fname 
-					+ (AsciiCamera.s_colorized ? ".html" : ".txt"));
+			fw = new FileWriter(AsciiCamera.SAVE_DIR + fname);
 			fw.write( AsciiCamera.s_colorized ? 
 					getColorizedText() : 
 					getGrayscaleText());
 			
 			Toast.makeText(AsciiCamera.this, fname + 
-					(AsciiCamera.s_colorized ? ".html " : ".txt ") + 
 					getString(R.string.savedto) + " " +
 					AsciiCamera.SAVE_DIR, 1000).show();
 		}catch (FileNotFoundException e) {
@@ -450,24 +469,42 @@ public class AsciiCamera extends Activity {
 		 finish();
 	}
 	
-	public static boolean savePicture(String fname, Bitmap b) {
+	void savePicture(String fname, final Bitmap b) {
+			PromptDialog.prompt(fname, new PromptDialogCallback() {
+			
+			@Override
+			public void ok(String s) {
+				processSavingPicture(s, b);
+				Intent i = new Intent(AsciiCamera.this, SlidingMenu.class);
+				startActivity(i); 
+			}
+
+			@Override
+			public void cancel() {
+				Intent i = new Intent(AsciiCamera.this, SlidingMenu.class);
+				startActivity(i); 
+			}
+		}, this);
+	}
+	
+	private boolean processSavingPicture(String fname, Bitmap b) {
 		if (b==null) {
 			throw new IllegalArgumentException("Bitmap is null");
 		}
 		
 		FileOutputStream fos = null;
 		try {
-			fos = new FileOutputStream(AsciiCamera.SAVE_DIR + fname + ".png");
+			fos = new FileOutputStream(AsciiCamera.SAVE_DIR + fname);
 			b.compress(CompressFormat.PNG, 100, fos);
 			
 			ContentValues cv = new ContentValues();
 		    cv.put(DISPLAY_NAME, fname);
 		    cv.put(ORIENTATION, 90);
 		    cv.put(MIME_TYPE, "image/png");
-		    cv.put(DATA, AsciiCamera.SAVE_DIR + fname + ".png");
+		    cv.put(DATA, AsciiCamera.SAVE_DIR + fname);
 		    AsciiCamera.s_instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, cv);
 
-		    Toast.makeText(AsciiCamera.s_instance, fname+".png " + 
+		    Toast.makeText(AsciiCamera.s_instance, fname + " " +
 					AsciiCamera.s_instance.getString(R.string.savedto) + " " +
 					AsciiCamera.SAVE_DIR, 1000).show();
 			return true;

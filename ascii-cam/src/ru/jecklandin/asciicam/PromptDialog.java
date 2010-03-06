@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 
 public class PromptDialog {
 	
@@ -17,15 +18,18 @@ public class PromptDialog {
 		View view = li.inflate(R.layout.promptdialog, null);
 		//get a builder and set the view
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-		builder.setTitle("Prompt");
+		builder.setTitle("Saving the file");
 		builder.setView(view);
 		//add buttons and listener
 		
+		final EditText edit = (EditText) view.findViewById(R.id.EditText01);
+		edit.setText(defaultValue);
+		    
 		builder.setPositiveButton("OK", new OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				callback.setValue("t");
+				callback.ok(edit.getEditableText().toString());
 			}
 		});
 		builder.setNegativeButton("Cancel", new OnClickListener() {
@@ -33,6 +37,7 @@ public class PromptDialog {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
+				callback.cancel();
 			}
 		});
 		//get the dialog
@@ -42,7 +47,8 @@ public class PromptDialog {
 	}
 	
 	interface PromptDialogCallback {
-		void setValue(String s);
+		void ok(String s);
+		void cancel();
 	}
 	
 }

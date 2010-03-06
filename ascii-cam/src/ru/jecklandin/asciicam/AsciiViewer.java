@@ -120,7 +120,7 @@ class AsciiViewer extends ImageView {
 		}
 		
 		if (m_savePic && !m_wait) {
-			AsciiCamera.savePicture(m_fname, m_saveBitmap);
+			AsciiCamera.s_instance.savePicture(m_fname, m_saveBitmap);
 			m_savePic = false;
 			invalidate();
 		}
