@@ -1,5 +1,10 @@
 package ru.jecklandin.asciicam;
 
+import static android.provider.MediaStore.MediaColumns.DATA;
+
+import static android.provider.MediaStore.MediaColumns.DISPLAY_NAME;
+import static android.provider.MediaStore.MediaColumns.MIME_TYPE;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,6 +16,7 @@ import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +28,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore.Images;
+import android.provider.MediaStore.Images.Media;
+import android.text.util.Linkify;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -35,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import static android.provider.MediaStore.Images.Media.*;
 
 import com.nullwire.trace.ExceptionHandler;
 
@@ -55,10 +65,11 @@ public class AsciiCamera extends Activity {
 	static boolean s_inverted;
 	static boolean s_grayscale; 
 	static boolean s_colorized; 
+	static boolean s_bw;
 	
 	static Bitmap s_defaultBitmap;
 	
-	public static String SAVE_DIR = "/sdcard/DCIM/asciicamera/";
+	public static String SAVE_DIR = "/sdcard/asciicamera/";
 	
 	Camera m_camera;
 	AsciiViewer m_viewer;
@@ -182,7 +193,11 @@ public class AsciiCamera extends Activity {
     public static void showAbout(Context ctx) {
     	AlertDialog.Builder d = new AlertDialog.Builder(ctx);
 		d.setIcon(R.drawable.icon);
-		d.setMessage(AsciiCamera.s_aboutString + "\n\n" + ctx.getString(R.string.credits));
+		TextView tw = new TextView(ctx);
+		tw.setText(AsciiCamera.s_aboutString + "\n\n" + ctx.getString(R.string.credits));
+		tw.setPadding(10, 10, 10, 10);  
+		Linkify.addLinks(tw, Linkify.EMAIL_ADDRESSES);
+		d.setView(tw);
 		d.setTitle(ctx.getResources().getString(R.string.app_name));
 		d.create();
 		d.show();
@@ -233,7 +248,6 @@ public class AsciiCamera extends Activity {
     protected void flipGrayscale() {
     	m_viewer.reset();
 		AsciiCamera.s_grayscale =! AsciiCamera.s_grayscale;
-		//AsciiCamera.s_inverted = false;
 	}
     
     
@@ -390,6 +404,8 @@ public class AsciiCamera extends Activity {
 		return buf.toString();
 	}
 	
+	
+	
 	void saveText() {
 		if (AsciiCamera.isCardMounted()) {
 			Toast.makeText(this, getString(R.string.unmount),Toast.LENGTH_SHORT).show();
@@ -443,7 +459,15 @@ public class AsciiCamera extends Activity {
 		try {
 			fos = new FileOutputStream(AsciiCamera.SAVE_DIR + fname + ".png");
 			b.compress(CompressFormat.PNG, 100, fos);
-			Toast.makeText(AsciiCamera.s_instance, fname+".png " + 
+			
+			ContentValues cv = new ContentValues();
+		    cv.put(DISPLAY_NAME, fname);
+		    cv.put(ORIENTATION, 90);
+		    cv.put(MIME_TYPE, "image/png");
+		    cv.put(DATA, AsciiCamera.SAVE_DIR + fname + ".png");
+		    AsciiCamera.s_instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, cv);
+
+		    Toast.makeText(AsciiCamera.s_instance, fname+".png " + 
 					AsciiCamera.s_instance.getString(R.string.savedto) + " " +
 					AsciiCamera.SAVE_DIR, 1000).show();
 			return true;
@@ -457,6 +481,8 @@ public class AsciiCamera extends Activity {
 				e.printStackTrace();
 			}
 		}
+		
+		
 	}
 	
 	
@@ -493,6 +519,7 @@ public class AsciiCamera extends Activity {
 	private void reset() {
 		m_viewer.m_textsize = AsciiViewer.DEFAUL_FONT;
 		AsciiCamera.s_inverted = false;
+		AsciiCamera.s_bw = false;
 		AsciiCamera.s_grayscale = false; 
 		AsciiCamera.s_colorized = true;
 		AsciiCamera.s_bitmapSize = new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT);
@@ -649,6 +676,15 @@ public class AsciiCamera extends Activity {
 			}
 		}
 		
+		
+		public void setBW(boolean bw) {
+			if (bw != AsciiCamera.s_bw) {
+				AsciiCamera.s_bw = bw;
+				m_viewer.reset();
+				convert();
+			}
+		}
+		
 		public void setColorized(boolean col) {
 			if (AsciiCamera.s_colorized != col) {
 				AsciiCamera.this.colorize(col);
@@ -692,6 +728,8 @@ public class AsciiCamera extends Activity {
 		public void savePicture() {
 			AsciiCamera.this.savePicture();
 		}
+
+
 	}
 	
 } 

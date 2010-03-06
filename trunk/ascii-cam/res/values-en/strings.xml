@@ -18,7 +18,7 @@
     <string name="processing">Asciization</string>
     <string name="colorize">Colorized</string>
     
-    <string name="credits"> </string>
-    
+    <string name="credits"> Also thx John Malcolm, Lukas Brunner and others </string>
+    <string name="choosefn"> Please enter the filename </string>
     
 </resources>

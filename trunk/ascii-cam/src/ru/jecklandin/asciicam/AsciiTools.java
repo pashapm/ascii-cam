@@ -88,12 +88,12 @@ public class AsciiTools {
 			StringBuffer buf = new StringBuffer("");
 			for (int j=sq_height-1; j>0; j--) {
 				int s = (AsciiCamera.s_inverted && AsciiCamera.s_grayscale) ? (10-symbols[i][j]) : (symbols[i][j]);
-				if (AsciiCamera.s_grayscale) {
+				if (! AsciiCamera.s_bw) {
 					buf.append(AsciiTools.symbolsMap.get(s));	
 				} else {
 					buf.append(AsciiTools.neatSymbolsMap.get(s));
 				}
-			}
+			}  
 			ret[i] = buf.toString();
 		}
 		return ret;
