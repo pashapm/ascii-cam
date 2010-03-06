@@ -91,6 +91,7 @@ public class SlidingMenu extends Activity {
 		}
 		
 		m_checkInvert.setChecked(AsciiCamera.s_inverted);
+		m_bwCheck.setChecked(AsciiCamera.s_bw);
 		
 		m_mayAction = true;
 		super.onStart();
@@ -167,6 +168,15 @@ public class SlidingMenu extends Activity {
 			}
 		});
        
+        m_bwCheck.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				SlidingMenu.this.m_facade.setBW(isChecked);
+				
+			}
+		});
+        
         m_checkInvert.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
