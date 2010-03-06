@@ -232,6 +232,7 @@ public class SlidingMenu extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				SlidingMenu.this.finish();
 				m_facade.savePicture();
 			}
 		});
@@ -240,6 +241,7 @@ public class SlidingMenu extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				SlidingMenu.this.finish();
 				m_facade.saveText();
 			}
 		});
