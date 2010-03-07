@@ -18,7 +18,7 @@ public class PromptDialog {
 		View view = li.inflate(R.layout.promptdialog, null);
 		//get a builder and set the view
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-		builder.setTitle("Saving the file");
+		builder.setTitle(R.string.savingfile);
 		builder.setView(view);
 		//add buttons and listener
 		

@@ -73,9 +73,9 @@ public class AsciiTools {
 		for (int i=0; i<sq_width; i++) {
 			for (int j=0; j<sq_height; j++) {
 				if (AsciiCamera.s_grayscale) {
-					symbols[i][j] = (int)(AsciiTools.getAverageValue(b, i, j, sq_size));
+					symbols[i][j] = (int)(10*AsciiTools.getAverageValue(b, i, j, sq_size));
 				} else {
-					symbols[i][j] = (int)(AsciiTools.getNeatValue(b, i, j, sq_size));
+					symbols[i][j] = (int)(10*AsciiTools.getNeatValue(b, i, j, sq_size));
 				}
 			}
 			if (progressCallback!=null && i%5==0) {
@@ -100,22 +100,28 @@ public class AsciiTools {
 	}
 	
 	private static ColoredValue getColoredValue(Bitmap bm, int x, int y, int sq_size) {
-		float hsv[] = new float[3];
 		int color = bm.getPixel(x*sq_size+sq_size/2, y*sq_size+sq_size/2);
 		ColoredValue val = new ColoredValue();
 		val.color = color;
-		Color.colorToHSV(color, hsv);
-		val.value = hsv[2]*10;
+		val.value = 10*AsciiTools.getValue(color);
 		val.symbol = AsciiTools.symbolsMap.get((int)val.value);
 		return val;	
+	}
+	
+	private static float getValue(int color) {
+		int r = (char)((color >> 16) & 0xff);
+		int g = (char)((color >> 8) & 0xff);
+		int b = (char)(color & 0xff);
+		char gray = (char)(0.30f*r+0.59f*g+0.11f*b);
+		return ((float)gray)/256f;
 	}
 	
 	private static float getAverageValue(Bitmap bm, int x, int y, int sq_size) {
 		float hsv[] = new float[3];
 		float val_sum = 0;
 		if (true) { //low quality
-			Color.colorToHSV(bm.getPixel(x*sq_size+sq_size/2, y*sq_size+sq_size/2), hsv);
-			return hsv[2]*10;	
+			int p = bm.getPixel(x*sq_size+sq_size/2, y*sq_size+sq_size/2);
+			return AsciiTools.getValue(p);
 		} else {
 			for (int i=0; i<sq_size;++i) 
 			for (int j=0; j<sq_size;++j) {
@@ -131,8 +137,8 @@ public class AsciiTools {
 		float hsv[] = new float[3];
 		for (int i=0; i<sq_size;++i) 
 			for (int j=0; j<sq_size;++j) {
-				Color.colorToHSV(bm.getPixel(x*sq_size+i, y*sq_size+j), hsv);
-				if (hsv[2] > 0.6) {
+				float val = AsciiTools.getValue(bm.getPixel(x*sq_size+i, y*sq_size+j));
+				if (val > 0.6) {
 					if (i==0 && j==1)
 						res |= (1<<1); // 0010
 					else if (i==1 && j==0)
