@@ -20,4 +20,5 @@
     
     <string name="credits"> Also thx John Malcolm, Lukas Brunner and others  </string>
     <string name="choosefn"> Please enter the filename </string>
+    <string name="savingfile"> Saving the file </string>
 </resources>
