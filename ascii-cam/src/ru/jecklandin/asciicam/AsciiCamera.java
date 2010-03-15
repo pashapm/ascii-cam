@@ -22,8 +22,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;
 import android.os.AsyncTask;
@@ -33,6 +36,7 @@ import android.os.Handler;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.Media;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -41,6 +45,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -78,7 +83,7 @@ public class AsciiCamera extends Activity {
 	Preview m_preview;
 	boolean m_photoMode = true;
 	PicPreviewCallback m_prCallback = new PicPreviewCallback();
-	private Facade m_facade; 
+	private Facade m_facade;
 	  
 	private static String s_aboutString = "© Evgeny Balandin, 2010 \nbalandin.evgeny@gmail.com";
 	
@@ -132,6 +137,17 @@ public class AsciiCamera extends Activity {
 				makeShot();
 			}
 		});
+        
+        
+        Button b = (Button) lay.findViewById(R.id.PickImage);
+        b.setOnClickListener(new Button.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				pickFromAlbum();
+			}
+		});
+        
         getWindow().addContentView(lay, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT)); 
    
         registerForContextMenu(m_viewer);
@@ -267,7 +283,7 @@ public class AsciiCamera extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		m_camera.release();
+		m_camera.release();	
 	}  
 
 	private Bitmap resizeBitmap(Bitmap b, int w, int h) {
@@ -553,12 +569,50 @@ public class AsciiCamera extends Activity {
 		b.create().show();
 	}
 	
+	private void pickFromAlbum() {
+		m_photoMode = false;
+		setContentView(m_viewer);
+		m_camera.stopPreview(); 
+		Intent i = new Intent(Intent.ACTION_PICK);
+		i.setType("image/*");
+		startActivityForResult(i, 1); 
+	}
+	
+	@Override
+	protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+		if (requestCode != 1) {
+			return;
+		}
+		
+		if (resultCode == Activity.RESULT_OK) {
+			//fetch image
+			try {
+				Bitmap bm = Media.getBitmap(getContentResolver(), data.getData());
+				if (AsciiCamera.s_defaultBitmap != null) {
+					AsciiCamera.s_defaultBitmap.recycle();
+				}
+				AsciiCamera.s_defaultBitmap = null;
+				AsciiCamera.s_instance.convertBitmapAsync(bm
+						,new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else if (resultCode == Activity.RESULT_CANCELED){
+			restartApp();
+		}
+	}
+	
 	private void reset() {
 		m_viewer.m_textsize = AsciiViewer.DEFAUL_FONT;
 		AsciiCamera.s_inverted = false;
 		AsciiCamera.s_bw = false;
-		AsciiCamera.s_grayscale = false; 
-		AsciiCamera.s_colorized = true;
+
+		SharedPreferences prefs = getSharedPreferences("asciicamera", MODE_PRIVATE);
+		AsciiCamera.s_grayscale = prefs.getBoolean("gs", false); 
+		AsciiCamera.s_colorized = prefs.getBoolean("col", true);
+		
 		AsciiCamera.s_bitmapSize = new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT);
 		AsciiCamera.s_availableSizes = getResolutions();
 		m_viewer.reset();
@@ -766,6 +820,9 @@ public class AsciiCamera extends Activity {
 			AsciiCamera.this.savePicture();
 		}
 
+		public void pickFromAlbum() {
+			AsciiCamera.s_instance.pickFromAlbum();
+		}
 
 	}
 	
