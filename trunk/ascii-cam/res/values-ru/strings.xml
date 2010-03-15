@@ -21,4 +21,6 @@
     <string name="credits"> Благодарности: John Malcolm, Lukas Brunner и другие </string>
     <string name="choosefn"> Введите имя файла </string>
     <string name="savingfile"> Сохранение </string>
+    
+    <string name="settingssaved"> Новое значение по умолчанию сохранено </string>
 </resources>

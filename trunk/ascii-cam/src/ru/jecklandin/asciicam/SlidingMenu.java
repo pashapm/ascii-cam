@@ -9,14 +9,18 @@ import java.util.Vector;
 import android.R.anim;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -30,6 +34,7 @@ import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -197,6 +202,22 @@ public class SlidingMenu extends Activity {
 			}
 		});
         
+        m_gsRadio.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View arg0) {
+				SharedPreferences prefs = getSharedPreferences("asciicamera", MODE_PRIVATE);
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putBoolean("gs", true);
+				editor.commit();
+				editor.putBoolean("col", false);
+				editor.commit();
+				Toast.makeText(SlidingMenu.this, R.string.settingssaved, Toast.LENGTH_LONG).show();
+				m_facade.reset();
+				return true;
+			}
+		});
+        
         m_colRadio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
@@ -210,6 +231,21 @@ public class SlidingMenu extends Activity {
 			}
 		});
         
+        m_colRadio.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View arg0) {
+				SharedPreferences prefs = getSharedPreferences("asciicamera", MODE_PRIVATE);
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putBoolean("gs", false);
+				editor.commit();
+				editor.putBoolean("col", true);
+				editor.commit();
+				Toast.makeText(SlidingMenu.this, R.string.settingssaved, Toast.LENGTH_LONG).show();
+				m_facade.reset();
+				return true;
+			}
+		});
                 
         m_imsizeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
