@@ -27,6 +27,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;
 import android.os.AsyncTask;
@@ -137,7 +138,7 @@ public class AsciiCamera extends Activity {
 				makeShot();
 			}
 		});
-        
+          
         
         Button b = (Button) lay.findViewById(R.id.PickImage);
         b.setOnClickListener(new Button.OnClickListener() {
@@ -198,7 +199,7 @@ public class AsciiCamera extends Activity {
 			 
 			 m_viewer.invalidate();
 		 }
-		return  super.onKeyDown(keyCode, event);
+		return true;
 	}
 	
 	void makeShot() {
@@ -286,6 +287,29 @@ public class AsciiCamera extends Activity {
 		m_camera.release();	
 	}  
 
+	/**
+	 * Saves aspect ratio
+	 * @param b
+	 * @param width
+	 * @return
+	 */
+	private Bitmap resizeBitmap(Bitmap b) {
+		float ratio = ((float)b.getWidth()) / ((float)b.getHeight());
+		boolean horiz = ratio > 1.0f;
+		
+		if (horiz) { //simply resize
+			int height = (int) (AsciiCamera.CONV_WIDTH / ratio);
+			return resizeBitmap(b, AsciiCamera.CONV_WIDTH, height);
+		} else { //rotate and resize
+			int width = (int) (AsciiCamera.CONV_WIDTH * ratio);
+			Bitmap rb = resizeBitmap(b, width, AsciiCamera.CONV_WIDTH);
+			Matrix m = new Matrix();
+			m.setRotate(-90, 0, 0);
+			m.postTranslate(0, AsciiCamera.CONV_HEIGHT);
+			return Bitmap.createBitmap(rb, 0, 0, rb.getWidth(), rb.getHeight(), m, false);
+		}
+	}
+	
 	private Bitmap resizeBitmap(Bitmap b, int w, int h) {
 		if (b == null) {  //strange error
 			restartApp();
@@ -296,14 +320,6 @@ public class AsciiCamera extends Activity {
 			b.recycle();	
 		}
 		
-//		Bitmap b1 = null;
-//		if (b.getHeight() != h || b.getWidth() != w ) {
-//			b1 = Bitmap.createScaledBitmap(b, w, h , false);	
-//			b.recycle();
-//		} else {
-//			b1 = b;
-//		}
-//		return b1;
 		return b1;
 	}
 	
@@ -316,7 +332,7 @@ public class AsciiCamera extends Activity {
 	 * Sync. convert the given bitmap
 	 */
 	public void convertBitmap(Bitmap b) {
-		Bitmap b1 = resizeBitmap(b, AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT);
+		Bitmap b1 = resizeBitmap(b);
 		m_viewer.m_bitmap = b1;
 		m_viewer.m_text = AsciiTools.convertBitmap(b1, new ProgressCallback() {
 			
@@ -673,7 +689,7 @@ public class AsciiCamera extends Activity {
 			Bitmap b1;
 			if (s_w == AsciiCamera.CONV_WIDTH && s_h == AsciiCamera.CONV_HEIGHT) {
 				if (AsciiCamera.s_defaultBitmap == null)  {
-					AsciiCamera.s_defaultBitmap = resizeBitmap(params[0], s_w, s_h);
+					AsciiCamera.s_defaultBitmap = resizeBitmap(params[0]);
 				}
 				b1 = AsciiCamera.s_defaultBitmap;
 			} else {
@@ -723,7 +739,7 @@ public class AsciiCamera extends Activity {
 			Bitmap b1;
 			if (s_w == AsciiCamera.CONV_WIDTH && s_h == AsciiCamera.CONV_HEIGHT) {
 				if (AsciiCamera.s_defaultBitmap == null)  {
-					AsciiCamera.s_defaultBitmap = resizeBitmap(params[0], s_w, s_h);
+					AsciiCamera.s_defaultBitmap = resizeBitmap(params[0]);
 				}
 				b1 = AsciiCamera.s_defaultBitmap;
 			} else {
