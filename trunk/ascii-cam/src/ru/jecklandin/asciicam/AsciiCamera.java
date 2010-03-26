@@ -294,6 +294,13 @@ public class AsciiCamera extends Activity {
 	 * @return
 	 */
 	private Bitmap resizeBitmap(Bitmap b) {
+		
+		if (b.getWidth() < AsciiCamera.CONV_WIDTH 
+				&& b.getHeight() < AsciiCamera.CONV_HEIGHT) {
+			
+			return b;
+		}
+		
 		float ratio = ((float)b.getWidth()) / ((float)b.getHeight());
 		boolean horiz = ratio > 1.0f;
 		
@@ -630,14 +637,14 @@ public class AsciiCamera extends Activity {
 		AsciiCamera.s_colorized = prefs.getBoolean("col", true);
 		
 		AsciiCamera.s_bitmapSize = new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT);
-		AsciiCamera.s_availableSizes = getResolutions();
+		
 		m_viewer.reset();
 		m_viewer.resetTextSize();
 	}
 	
 	BitmapSize[] getResolutions() {
-		float w = AsciiCamera.CONV_WIDTH;
-		float h = AsciiCamera.CONV_HEIGHT;
+		float w = AsciiCamera.s_defaultBitmap.getWidth(); //AsciiCamera.CONV_WIDTH;
+		float h = AsciiCamera.s_defaultBitmap.getHeight(); //AsciiCamera.CONV_HEIGHT;
 		float ratio = w/h;
 		float[] mp = {0.3f, 0.5f, 0.8f, 1f, 1.3f, 1.6f, 2f};
 		BitmapSize[] vec = new BitmapSize[mp.length];
@@ -695,6 +702,8 @@ public class AsciiCamera extends Activity {
 			} else {
 				b1 = resizeBitmap(params[0], s_w, s_h);
 			}
+			AsciiCamera.s_availableSizes = getResolutions();
+			
 			m_viewer.m_bitmap = b1;
 			return AsciiTools.convertBitmap(b1, this);	
 		}
@@ -745,6 +754,8 @@ public class AsciiCamera extends Activity {
 			} else {
 				b1 = resizeBitmap(params[0], s_w, s_h);
 			}
+			AsciiCamera.s_availableSizes = getResolutions();
+			
 			m_viewer.m_bitmap = b1;
 			return AsciiTools.convertColorBitmap(b1, this);	
 		}
