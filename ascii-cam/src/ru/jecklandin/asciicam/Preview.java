@@ -40,12 +40,16 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
         	mCamera = Camera.open();
         	if (mCamera == null) {
         		cam.restartApp();
+        		return;
         	}
         }
            mCamera.setPreviewDisplay(holder);
         } catch (IOException exception) {
             mCamera.release();
             mCamera = null;
+        } catch (RuntimeException e) {
+        	cam.restartApp();
+        	return;
         }
     }
    
@@ -60,7 +64,20 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         // Now that the size is known, set up the camera parameters and begin
         // the preview.
-        Camera.Parameters parameters = mCamera.getParameters();
+    	
+    	Camera.Parameters parameters = null;
+    	if (mCamera != null ) {
+    		try {
+    			parameters = mCamera.getParameters();
+    		} catch (RuntimeException e) {
+				cam.restartApp();
+				return;
+			}
+    	} else {
+    		cam.restartApp();
+    		return;
+    	}
+
         parameters.setPreviewSize(w, h);
         mCamera.setParameters(parameters);
         mCamera.startPreview();

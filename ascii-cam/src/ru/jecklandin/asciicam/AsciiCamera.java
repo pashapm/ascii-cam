@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import ru.jecklandin.asciicam.PromptDialog.PromptDialogCallback;
 
@@ -24,12 +26,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -110,7 +115,52 @@ public class AsciiCamera extends Activity {
         AsciiCamera.CONV_HEIGHT = AsciiCamera.s_screenHeight;
         AsciiCamera.CONV_WIDTH = AsciiCamera.s_screenWidth;
         
+        File f = new File(AsciiCamera.SAVE_DIR);
+        if (!f.exists())    
+        	f.mkdirs(); 
+        
         m_viewer = new AsciiViewer(this);
+        
+//        PackageManager pm = getPackageManager();
+//        Intent i = new Intent(Intent.ACTION_VIEW); 
+//        i.setType("image/*");   
+//        Log.d("#####", "image123 !!!!!");
+//        startActivity(i)    ;   
+//        List<ResolveInfo> l = pm.queryIntentActivities(i,0);
+//        for (ResolveInfo in : l) {
+//        	Log.d("#####", in.activityInfo.name);
+//        }
+         
+         if (getIntent() != null && getIntent().getAction() != null && getIntent().getAction().equals(Intent.ACTION_SEND)) {
+        	 
+        	Log.d("########", ""+getIntent().getExtras().keySet());
+            Uri img = Uri.parse(getIntent().getExtras().get(Intent.EXTRA_STREAM).toString());        	 
+        	Bitmap b = null;
+        	try {
+				 b = Media.getBitmap(getContentResolver(), img);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        	
+        	m_photoMode = false;
+    		setContentView(m_viewer);
+    		reset();
+    		
+    		if (AsciiCamera.s_defaultBitmap != null) {
+				AsciiCamera.s_defaultBitmap.recycle();
+			}
+			AsciiCamera.s_defaultBitmap = null;
+			AsciiCamera.s_instance.convertBitmapAsync(b
+					,new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT));
+    		return;
+        }
+        
+        
+        
+        
+        
         m_camera = Camera.open(); 
          
 //        dont work on android > 2.0  
@@ -121,9 +171,7 @@ public class AsciiCamera extends Activity {
         m_preview = new Preview(this, m_camera);
         setContentView(m_preview);  
         
-        File f = new File(AsciiCamera.SAVE_DIR);
-        if (!f.exists())
-        	f.mkdirs();
+
         
 
         //add button to the content view
@@ -151,7 +199,7 @@ public class AsciiCamera extends Activity {
         
         getWindow().addContentView(lay, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT)); 
    
-        registerForContextMenu(m_viewer);
+        //registerForContextMenu(m_viewer);
         reset();
     }  
     
@@ -196,10 +244,9 @@ public class AsciiCamera extends Activity {
 				 return true;
 			 }
 			 
-			 
 			 m_viewer.invalidate();
 		 }
-		return true;
+		return super.onKeyDown(keyCode, event);
 	}
 	
 	void makeShot() {
@@ -284,7 +331,9 @@ public class AsciiCamera extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		m_camera.release();	
+		if (m_camera != null ) {
+			m_camera.release();		
+		}
 	}  
 
 	/**
@@ -328,6 +377,13 @@ public class AsciiCamera extends Activity {
 		}
 		
 		return b1;
+	}
+	
+	public void convert(Bitmap b) { 
+		if (b!=null) {
+			AsciiCamera.s_defaultBitmap = b;
+		}
+		convert();
 	}
 	
 	public void convert() {
