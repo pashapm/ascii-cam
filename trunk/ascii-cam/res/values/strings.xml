@@ -14,7 +14,7 @@
     <string name="saveaspic">Save as picture</string>
     <string name="saveastext">Save as text</string>
     <string name="saveashtml">Save as HTML</string>
-    <string name="resizing">Resizing the picture...</string>
+    <string name="resizing">Processing...</string>
     <string name="processing">Asciization</string>
     <string name="colorize">Colorized</string>
     

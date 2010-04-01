@@ -74,7 +74,7 @@ public class SlidingMenu extends Activity {
 
 	private boolean m_mayAction = true;
 	
-	@Override
+	@Override  
 	protected void onStart() {
 		m_ly.startAnimation(m_appearAnimation);
 		m_mayAction = false;
