@@ -23,4 +23,6 @@
     <string name="savingfile"> Сохранение </string>
     
     <string name="settingssaved"> Новое значение по умолчанию сохранено </string>
+    <string name="more"> Доп. опции </string>
+    <string name="less"> Скрыть доп. </string>
 </resources>

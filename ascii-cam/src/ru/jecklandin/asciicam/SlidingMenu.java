@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -65,6 +66,10 @@ public class SlidingMenu extends Activity {
 	Button m_butText;
 	Button m_butReset;
 	Button m_butAbout;
+	Button m_more;
+	Button m_less;
+	Button m_share;
+	
 	
 	Map<String, View> m_views; 
 
@@ -74,6 +79,7 @@ public class SlidingMenu extends Activity {
 
 	private boolean m_mayAction = true;
 	
+	private static boolean is_ext  = false;
 	@Override  
 	protected void onStart() {
 		m_ly.startAnimation(m_appearAnimation);
@@ -97,6 +103,8 @@ public class SlidingMenu extends Activity {
 		
 		m_checkInvert.setChecked(AsciiCamera.s_inverted);
 		m_bwCheck.setChecked(AsciiCamera.s_bw);
+		
+		setExtVisible(SlidingMenu.is_ext);
 		
 		m_mayAction = true;
 		super.onStart();
@@ -126,7 +134,6 @@ public class SlidingMenu extends Activity {
         m_views.put("qualayout",m_ly.findViewById(R.id.LinearLayout09));
         m_views.put("checkbox",m_ly.findViewById(R.id.CheckBox01));
         m_views.put("rgroup",m_ly.findViewById(R.id.RadioGroup01));
-        m_views.put("flipper",m_ly.findViewById(R.id.ViewFlipper01));
         
         
         m_checkInvert = (CheckBox) m_ly.findViewById(R.id.CheckBox01);
@@ -141,15 +148,10 @@ public class SlidingMenu extends Activity {
     	m_butText = (Button) m_ly.findViewById(R.id.Button02);
     	m_butReset = (Button) m_ly.findViewById(R.id.Button03);
     	m_butAbout = (Button) m_ly.findViewById(R.id.Button04);
+    	m_more = (Button) m_ly.findViewById(R.id.morebutton);
+    	m_share = (Button) m_ly.findViewById(R.id.share);
     	
-    	m_emptyLay.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				finish();
-				
-			}
-		});
+    	  
     	
         m_textSizeSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			
@@ -299,9 +301,37 @@ public class SlidingMenu extends Activity {
 			}
 		});
         
+        m_more.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				SlidingMenu.is_ext =! SlidingMenu.is_ext;
+				setExtVisible(SlidingMenu.is_ext);
+			};
+		});
+        
+        m_share.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				m_facade.share();
+			}
+		});
+        
         setContentView(m_ly);
 	}
-	 
+	
+	private void setExtVisible(boolean b) {
+		LinearLayout ext = (LinearLayout) m_ly.findViewById(R.id.extlay);
+		if (!b) {
+			ext.setVisibility(View.GONE);
+			m_more.setText(R.string.more);
+		} else {
+			ext.setVisibility(View.VISIBLE);
+			m_more.setText(R.string.less);
+		}
+	}
+	
 	private void makeOthersTransparent(String name) {
 		Set s = m_views.entrySet();
 		Iterator i = s.iterator();

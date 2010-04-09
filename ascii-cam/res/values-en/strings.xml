@@ -23,4 +23,6 @@
     <string name="savingfile"> Saving the file </string>
     
     <string name="settingssaved"> Default value was saved </string>
+    <string name="more"> More </string>
+    <string name="less"> Less </string>
 </resources>
