@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" android:orientation="horizontal" android:background="#00000000">
+    android:layout_height="fill_parent" android:background="#00000000" android:orientation="horizontal" android:layout_width="fill_parent">
 
-<LinearLayout android:id="@+id/LinearLayout01" android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="horizontal" android:background="#00ff0000" android:layout_weight="1.2">
 
-</LinearLayout>
-<LinearLayout android:id="@+id/LinearLayout02" android:layout_width="fill_parent" android:orientation="vertical" android:layout_weight="1" android:layout_height="fill_parent" android:background="#00ffffff">
+<LinearLayout android:id="@+id/LinearLayout02" android:orientation="vertical" android:layout_height="fill_parent" android:visibility="visible" android:layout_width="fill_parent" android:layout_weight="1" android:background="#eeeeee">
 
 <LinearLayout android:id="@+id/LinearLayout04" android:layout_width="fill_parent" android:background="#cccccc" android:orientation="horizontal" android:layout_height="wrap_content" android:layout_weight="1" android:minHeight="50dp"><TextView android:id="@+id/TextView01" android:layout_height="wrap_content" android:textColor="#ff000000" android:text="+/-" android:typeface="monospace" android:gravity="center_horizontal" android:textSize="17sp" android:layout_width="wrap_content" android:layout_gravity="center"></TextView><SeekBar android:id="@+id/SeekBar01" android:layout_width="fill_parent" android:paddingLeft="5sp" android:paddingRight="5sp" android:max="150" android:layout_gravity="center" android:layout_height="wrap_content"></SeekBar>
 
@@ -32,17 +29,23 @@
 
 
 
-<LinearLayout android:id="@+id/LinearLayout09" android:layout_weight="1" android:orientation="horizontal" android:background="#cccccc" android:layout_height="wrap_content" android:layout_width="fill_parent">
+<LinearLayout android:id="@+id/LinearLayout09" android:layout_weight="1" android:background="#cccccc" android:layout_height="wrap_content" android:layout_width="fill_parent" android:orientation="horizontal">
 
 
-<Button android:id="@+id/Button03" android:layout_weight="1" android:textSize="12sp" android:layout_gravity="center" android:typeface="monospace" android:text="@string/reset" android:layout_height="fill_parent" android:layout_width="fill_parent"></Button><Button android:id="@+id/Button04" android:layout_weight="1" android:typeface="monospace" android:textSize="12sp" android:layout_gravity="center" android:text="@string/about" android:layout_height="fill_parent" android:layout_width="fill_parent"></Button>
-</LinearLayout><ViewFlipper android:id="@+id/ViewFlipper01" android:layout_height="wrap_content" android:layout_width="fill_parent"><LinearLayout android:id="@+id/LinearLayout05" android:layout_weight="1" android:layout_height="wrap_content" android:background="#eeeeee" android:layout_width="fill_parent"><Button android:id="@+id/Button01" android:layout_gravity="center" android:layout_width="fill_parent" android:layout_weight="1" android:typeface="monospace" android:textSize="12sp" android:text="@string/saveaspic" android:layout_height="fill_parent"></Button>
-<Button android:id="@+id/Button02" android:layout_width="fill_parent" android:layout_weight="1" android:typeface="monospace" android:layout_gravity="center" android:textSize="12sp" android:layout_height="wrap_content" android:text="@string/saveastext"></Button>
+<Button android:id="@+id/Button04" android:layout_weight="1" android:typeface="monospace" android:textSize="12sp" android:layout_gravity="center" android:text="@string/about" android:layout_height="fill_parent" android:layout_width="fill_parent"></Button><Button android:id="@+id/Button03" android:layout_weight="1" android:textSize="12sp" android:layout_gravity="center" android:typeface="monospace" android:text="@string/reset" android:layout_height="fill_parent" android:layout_width="fill_parent"></Button>
+
+</LinearLayout><Button android:layout_width="fill_parent" android:typeface="monospace" android:textSize="12sp" android:layout_weight="1" android:id="@+id/morebutton" android:layout_height="wrap_content" android:text="@string/more"></Button>
+
+
+</LinearLayout><LinearLayout android:background="#00ff0000" android:orientation="vertical" android:id="@+id/extlay" android:layout_width="fill_parent" android:layout_weight="1.2" android:layout_height="fill_parent" android:layout_marginLeft="5dip" android:visibility="visible"><LinearLayout android:id="@+id/LinearLayout05" android:background="#eeeeee" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_above="@+id/lessbutton"><Button android:id="@+id/Button01" android:layout_width="fill_parent" android:layout_weight="1" android:typeface="monospace" android:textSize="12sp" android:text="@string/saveaspic" android:layout_height="fill_parent"></Button>
+<Button android:id="@+id/Button02" android:layout_width="fill_parent" android:typeface="monospace" android:textSize="12sp" android:text="@string/saveastext" android:layout_height="fill_parent" android:layout_weight="1"></Button>
+
+</LinearLayout><LinearLayout android:id="@+id/LinearLayout06" android:layout_height="wrap_content" android:layout_width="fill_parent" android:background="#bbbbbb" android:layout_above="@+id/LinearLayout05"><Button android:text="Share" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="1" android:textSize="12sp" android:typeface="monospace" android:id="@+id/share" android:drawableTop="@drawable/share"></Button>
+</LinearLayout>
+
 
 </LinearLayout>
-</ViewFlipper>
 
 
-</LinearLayout>
 
 </LinearLayout>

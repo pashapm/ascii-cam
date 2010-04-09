@@ -84,6 +84,9 @@ public class AsciiCamera extends Activity {
 	
 	public static String SAVE_DIR = "/sdcard/asciicamera/";
 	
+	private Uri m_lastUri;
+	private boolean m_offerChoosingName;
+	
 	Camera m_camera;
 	AsciiViewer m_viewer;
 	Preview m_preview;
@@ -121,19 +124,7 @@ public class AsciiCamera extends Activity {
         
         m_viewer = new AsciiViewer(this);
         
-//        PackageManager pm = getPackageManager();
-//        Intent i = new Intent(Intent.ACTION_VIEW); 
-//        i.setType("image/*");   
-//        Log.d("#####", "image123 !!!!!");
-//        startActivity(i)    ;   
-//        List<ResolveInfo> l = pm.queryIntentActivities(i,0);
-//        for (ResolveInfo in : l) {
-//        	Log.d("#####", in.activityInfo.name);
-//        }
-         
          if (getIntent() != null && getIntent().getAction() != null && getIntent().getAction().equals(Intent.ACTION_SEND)) {
-        	 
-        	Log.d("########", ""+getIntent().getExtras().keySet());
             Uri img = Uri.parse(getIntent().getExtras().get(Intent.EXTRA_STREAM).toString());        	 
         	Bitmap b = null;
         	try {
@@ -280,7 +271,7 @@ public class AsciiCamera extends Activity {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case 0:
-			savePicture();
+			savePicture(true);
 			break;
 		case 1:
 			saveText();
@@ -423,15 +414,15 @@ public class AsciiCamera extends Activity {
 		}
 	}
 
-	void savePicture() {
+	void savePicture(boolean offerChoosingName) {
 		if (AsciiCamera.isCardMounted()) {
 			Toast.makeText(this, getString(R.string.unmount), Toast.LENGTH_SHORT).show();
 			return;
 		}
+		m_offerChoosingName = offerChoosingName;
 		Date d = Calendar.getInstance().getTime();
 		String fname = d.getHours()+"-"+d.getMinutes()+"-"+d.getSeconds()+".png";
 		m_viewer.savePicture(fname);
-		
 	}
 	
 	private String getGrayscaleText() {
@@ -565,8 +556,17 @@ public class AsciiCamera extends Activity {
 	}
 	
 	void savePicture(String fname, final Bitmap b) {
+		    if (! m_offerChoosingName) {
+		    	processSavingPicture(fname, b);
+				Intent i = new Intent(Intent.ACTION_SEND);
+				i.putExtra(Intent.EXTRA_STREAM, m_lastUri);
+				i.setType("image/png");
+				startActivity(i);
+				return;
+		    }     
+		    
 			PromptDialog.prompt(fname, new PromptDialogCallback() {
-			
+			         
 			@Override
 			public void ok(String s) {
 				processSavingPicture(s, b);
@@ -582,7 +582,8 @@ public class AsciiCamera extends Activity {
 		}, this);
 	}
 	
-	private boolean processSavingPicture(String fname, Bitmap b) {
+	private Uri processSavingPicture(String fname, Bitmap b) {
+		m_lastUri = null;
 		if (b==null) {
 			throw new IllegalArgumentException("Bitmap is null");
 		}
@@ -597,15 +598,19 @@ public class AsciiCamera extends Activity {
 		    cv.put(ORIENTATION, 90);
 		    cv.put(MIME_TYPE, "image/png");
 		    cv.put(DATA, AsciiCamera.SAVE_DIR + fname);
-		    AsciiCamera.s_instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, cv);
-
+		    Uri uri = AsciiCamera.s_instance.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, cv);
+		    
+		    if (m_offerChoosingName) {
 		    Toast.makeText(AsciiCamera.s_instance, fname + " " +
 					AsciiCamera.s_instance.getString(R.string.savedto) + " " +
 					AsciiCamera.SAVE_DIR, 1000).show();
-			return true;
+		    }
+		    
+		    m_lastUri = uri;
+			return uri;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}  finally {
 			try {
 				fos.close();
@@ -613,8 +618,6 @@ public class AsciiCamera extends Activity {
 				e.printStackTrace();
 			}
 		}
-		
-		
 	}
 	
 	
@@ -696,6 +699,10 @@ public class AsciiCamera extends Activity {
 		
 		m_viewer.reset();
 		m_viewer.resetTextSize();
+	}
+	
+	void share() {
+		savePicture(false);
 	}
 	
 	BitmapSize[] getResolutions() {
@@ -900,11 +907,15 @@ public class AsciiCamera extends Activity {
 		}
 		
 		public void savePicture() {
-			AsciiCamera.this.savePicture();
+			AsciiCamera.this.savePicture(true);
 		}
 
 		public void pickFromAlbum() {
 			AsciiCamera.s_instance.pickFromAlbum();
+		}
+		
+		public void share() {
+			AsciiCamera.s_instance.share();
 		}
 
 	}
