@@ -6,6 +6,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
+
+
+import com.mobclix.android.sdk.MobclixMMABannerXLAdView;
+
 import android.R.anim;
 import android.app.Activity;
 import android.content.Context;
@@ -30,6 +35,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
@@ -52,8 +58,8 @@ public class SlidingMenu extends Activity {
 
 	//elems
 	LinearLayout m_ly;
-	LinearLayout m_emptyLay;
 	LinearLayout m_biglay;
+	LinearLayout m_ext;
 	
 	SeekBar m_textSizeSeek;
 	CheckBox m_checkInvert;
@@ -69,9 +75,10 @@ public class SlidingMenu extends Activity {
 	Button m_more;
 	Button m_less;
 	Button m_share;
+	ImageView m_cowimage;
+	static MobclixMMABannerXLAdView adview_banner;
 	
-	
-	Map<String, View> m_views; 
+	Map<String, View> m_views;  
 
 	//---------animations
 	Animation m_appearAnimation;
@@ -79,10 +86,11 @@ public class SlidingMenu extends Activity {
 
 	private boolean m_mayAction = true;
 	
-	private static boolean is_ext  = false;
+	private boolean is_ext  = false;
 	@Override  
 	protected void onStart() {
-		m_ly.startAnimation(m_appearAnimation);
+		
+		//m_ly.startAnimation(m_appearAnimation);
 		m_mayAction = false;
 		
 		m_textSizeSeek.setProgress(m_facade.getTextSize()*10);
@@ -104,9 +112,11 @@ public class SlidingMenu extends Activity {
 		m_checkInvert.setChecked(AsciiCamera.s_inverted);
 		m_bwCheck.setChecked(AsciiCamera.s_bw);
 		
-		setExtVisible(SlidingMenu.is_ext);
+		setExtVisible(is_ext);
 		
 		m_mayAction = true;
+
+		
 		super.onStart();
 	}
 
@@ -115,18 +125,29 @@ public class SlidingMenu extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
-        
+
+		
         m_facade = AsciiCamera.s_instance.getFacade();
         
         //create animations
        
         m_appearAnimation = AnimationUtils.loadAnimation(this, R.anim.shake);
         m_fadeAnimation = AnimationUtils.loadAnimation(this, R.anim.fade);
-        
+         
         
         m_ly = (LinearLayout)View.inflate(this, R.layout.main, null);
-        m_emptyLay = (LinearLayout)m_ly.findViewById(R.id.LinearLayout01);
         m_biglay = (LinearLayout)m_ly.findViewById(R.id.LinearLayout02);
+        m_ext = (LinearLayout)m_ly.findViewById(R.id.extlay);
+        
+        
+        adview_banner = (MobclixMMABannerXLAdView) m_ly.findViewById(R.id.advertising_banner_view);
+		//adview_banner.getAd();
+		adview_banner.setRefreshTime(5000);
+//        if (adview_banner == null) {
+//        	adview_banner = (MobclixMMABannerXLAdView) m_ly.findViewById(R.id.advertising_banner_view);
+//    		//adview_banner.getAd();
+//    		adview_banner.setRefreshTime(5000);
+//        }
         
         m_views = new HashMap<String, View>();
         m_views.put("imsizelayout",m_ly.findViewById(R.id.LinearLayout03));
@@ -146,12 +167,14 @@ public class SlidingMenu extends Activity {
     	m_quaSpinner = (Spinner) m_ly.findViewById(R.id.Spinner02);
     	m_butPic = (Button) m_ly.findViewById(R.id.Button01);
     	m_butText = (Button) m_ly.findViewById(R.id.Button02);
-    	m_butReset = (Button) m_ly.findViewById(R.id.Button03);
+    	m_butReset = (Button) m_ly.findViewById(R.id.Button03); 
     	m_butAbout = (Button) m_ly.findViewById(R.id.Button04);
     	m_more = (Button) m_ly.findViewById(R.id.morebutton);
+    	m_less = (Button) m_ly.findViewById(R.id.less);
     	m_share = (Button) m_ly.findViewById(R.id.share);
-    	
+    	m_cowimage =  (ImageView) m_ly.findViewById(R.id.cow); 
     	  
+    	m_cowimage.setImageResource(R.drawable.cowedit);
     	
         m_textSizeSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			
@@ -179,6 +202,7 @@ public class SlidingMenu extends Activity {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
 				SlidingMenu.this.m_facade.setBW(isChecked);
 				
 			}
@@ -188,13 +212,15 @@ public class SlidingMenu extends Activity {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
 				SlidingMenu.this.m_facade.setInverted(isChecked);
 			}
-		});
+		}); 
         
         m_gsRadio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
 				SlidingMenu.this.m_facade.setGrayscale(isChecked);
 				if (isChecked) {
 					m_bwCheck.setEnabled(true);
@@ -224,6 +250,7 @@ public class SlidingMenu extends Activity {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
 				SlidingMenu.this.m_facade.setColorized(isChecked);
 				if (isChecked) {
 					m_bwCheck.setEnabled(false);
@@ -254,7 +281,7 @@ public class SlidingMenu extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
-					m_facade.setImageSize(AsciiCamera.s_availableSizes[arg2]);
+				m_facade.setImageSize(AsciiCamera.s_availableSizes[arg2]);
 			}
 
 			@Override
@@ -305,8 +332,17 @@ public class SlidingMenu extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				SlidingMenu.is_ext =! SlidingMenu.is_ext;
-				setExtVisible(SlidingMenu.is_ext);
+				is_ext =! is_ext;
+				setExtVisible(is_ext);
+			};
+		});
+        
+        m_less.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				is_ext =! is_ext;
+				setExtVisible(is_ext);
 			};
 		});
         
@@ -318,19 +354,28 @@ public class SlidingMenu extends Activity {
 			}
 		});
         
+        
+
+        
         setContentView(m_ly);
 	}
 	
 	private void setExtVisible(boolean b) {
-		LinearLayout ext = (LinearLayout) m_ly.findViewById(R.id.extlay);
 		if (!b) {
-			ext.setVisibility(View.GONE);
-			m_more.setText(R.string.more);
-		} else {
-			ext.setVisibility(View.VISIBLE);
-			m_more.setText(R.string.less);
+			m_ext.setVisibility(View.GONE);
+			m_biglay.setVisibility(View.VISIBLE);
+			m_cowimage.setImageResource(R.drawable.cowedit);
+		} else { 
+			m_ext.setVisibility(View.VISIBLE);
+			m_biglay.setVisibility(View.GONE);
+			m_cowimage.setImageResource(R.drawable.cowsave);
 		}
 	}
+	
+    @Override
+    protected void onStop() {
+         super.onStop();
+    }
 	
 	private void makeOthersTransparent(String name) {
 		Set s = m_views.entrySet();
@@ -344,3 +389,5 @@ public class SlidingMenu extends Activity {
 		}
 	}
 }
+
+
