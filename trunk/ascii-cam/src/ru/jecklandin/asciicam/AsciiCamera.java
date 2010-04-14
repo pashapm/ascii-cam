@@ -844,8 +844,9 @@ public class AsciiCamera extends Activity {
 		}
 		
 		public void setImageSize(BitmapSize bm) {
-			if (! bm.equals(AsciiCamera.s_bitmapSize)) {
-				AsciiCamera.s_bitmapSize = bm;
+			BitmapSize cursize = new BitmapSize(AsciiCamera.s_defaultBitmap.getWidth(),
+					AsciiCamera.s_defaultBitmap.getHeight());
+			if (! bm.equals(cursize)) {
 				convert();
 			}
 		}
