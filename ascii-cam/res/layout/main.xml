@@ -7,7 +7,7 @@
 	<LinearLayout android:id="@+id/LinearLayout02"
 		android:orientation="vertical" android:layout_height="fill_parent"
 		android:layout_width="fill_parent"
-		android:layout_weight="1" android:background="#eeeeee" android:minWidth="300dip" android:visibility="gone">
+		android:layout_weight="1" android:background="#eeeeee" android:minWidth="300dip" android:visibility="visible">
 
 		<LinearLayout android:id="@+id/LinearLayout04"
 			android:layout_width="fill_parent" android:background="#cccccc"
@@ -115,36 +115,24 @@
 
 	</LinearLayout>
 	<LinearLayout android:orientation="vertical" android:id="@+id/extlay"
-		android:layout_width="fill_parent" android:layout_weight="1.2"
-		android:layout_height="fill_parent" android:background="#eeeeee" android:gravity="center_horizontal" android:visibility="visible">
+		android:layout_width="fill_parent" android:gravity="center_horizontal" android:visibility="visible" android:background="#00eeeeee" android:layout_weight="1" android:layout_height="fill_parent" android:minHeight="100dip">
 		<LinearLayout android:id="@+id/LinearLayout05"
-			android:background="#eeeeee" android:layout_width="fill_parent"
-			android:layout_above="@+id/lessbutton" android:layout_height="wrap_content">
-			<Button android:id="@+id/Button01" android:layout_width="fill_parent"
+			android:layout_above="@+id/lessbutton" android:background="#00eeeeee" android:layout_width="fill_parent" android:layout_height="wrap_content" android:minHeight="100dip">
+			<Button android:id="@+id/less" android:typeface="monospace" android:text="@string/less" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="1" android:textSize="15sp" android:drawableTop="@drawable/edit" android:minHeight="50dip"></Button><Button android:id="@+id/Button01" android:layout_width="fill_parent"
 				android:layout_weight="1" android:typeface="monospace"
-				android:textSize="12sp" android:text="@string/saveaspic"
-				android:layout_height="fill_parent"></Button>
+				android:text="@string/saveaspic"
+				android:layout_height="fill_parent" android:drawableTop="@drawable/aspic" android:textSize="15sp" android:minHeight="50dip"></Button>
 			<Button android:id="@+id/Button02" android:layout_width="fill_parent"
-				android:typeface="monospace" android:textSize="12sp" android:text="@string/saveastext"
-				android:layout_height="fill_parent" android:layout_weight="1"></Button>
+				android:typeface="monospace" android:text="@string/saveastext"
+				android:layout_height="fill_parent" android:layout_weight="1" android:drawableTop="@drawable/astext" android:textSize="15sp" android:minHeight="50dip"></Button>
 
-		</LinearLayout>
-		<LinearLayout android:id="@+id/LinearLayout06"
-			android:layout_width="fill_parent"
-			android:layout_above="@+id/LinearLayout05" android:layout_height="fill_parent" android:layout_weight="1" android:visibility="visible" android:background="#ffffff">
-			<ImageView android:src="@drawable/asciicow" android:id="@+id/cow" android:layout_weight="1" android:background="#ffffff" android:visibility="visible" android:layout_width="fill_parent" android:layout_height="fill_parent" android:scaleType="center"></ImageView><Button android:text="Share" android:layout_height="fill_parent"
-				android:layout_width="fill_parent" android:layout_weight="1"
-				android:typeface="monospace" android:id="@+id/share"
-				android:drawableTop="@drawable/share" android:textSize="17sp"></Button>
-		</LinearLayout>
-        <com.mobclix.android.sdk.MobclixMMABannerXLAdView 
-            android:id="@+id/advertising_banner_view"
-            android:layout_height="50dp"
-            android:layout_width="300dp"
-        />
+		<Button android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="1" android:typeface="monospace" android:id="@+id/share" android:drawableTop="@drawable/share" android:text="@string/share" android:textSize="15sp" android:minHeight="50dip"></Button></LinearLayout>
+		
+        
 
 
-	<Button android:id="@+id/less" android:layout_height="wrap_content" android:layout_width="fill_parent" android:typeface="monospace" android:text="@string/less" android:textSize="12sp"></Button>
+	
+
 </LinearLayout>
 
 

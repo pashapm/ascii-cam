@@ -45,12 +45,17 @@ import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -59,6 +64,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import static android.provider.MediaStore.Images.Media.*;
 
+import com.mobclix.android.sdk.MobclixMMABannerXLAdView;
 import com.nullwire.trace.ExceptionHandler;
 
 public class AsciiCamera extends Activity { 
@@ -94,6 +100,8 @@ public class AsciiCamera extends Activity {
 	PicPreviewCallback m_prCallback = new PicPreviewCallback();
 	private Facade m_facade;
 	  
+	private MobclixMMABannerXLAdView mBanner;
+	
 	private static String s_aboutString = "© Evgeny Balandin, 2010 \nbalandin.evgeny@gmail.com";
 	
 	public static AsciiCamera s_instance;
@@ -174,6 +182,8 @@ public class AsciiCamera extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+//				Intent i = new Intent(AsciiCamera.this, AsciiViewerActivity.class);
+//				AsciiCamera.this.startActivity(i);
 				makeShot();
 			}
 		});
@@ -243,8 +253,25 @@ public class AsciiCamera extends Activity {
 	void makeShot() {
 		m_photoMode = false;
 		m_camera.takePicture(null, null, new PicSettingCallback(this));
-		setContentView(m_viewer);
+//		setContentView(m_viewer);
+		setContentImageViewer();
 		m_camera.stopPreview(); 
+	}   
+	
+	void setContentImageViewer() {
+		LayoutInflater infl = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LinearLayout lay = (LinearLayout) infl.inflate(R.layout.asciiviewer, null);
+		ViewGroup.LayoutParams pars = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+//		m_viewer.setLayoutParams(pars);
+//		lay.removeView(lay.findViewById(R.id.viewer));
+//		lay.addView(m_viewer, pars);
+//		setContentView(lay);
+		 
+		setContentView(m_viewer);
+		
+		getWindow().addContentView(lay, pars);
+		mBanner = (MobclixMMABannerXLAdView) lay.findViewById(R.id.advertising_banner_view);
+		mBanner.getAd();
 	}
     
     public static void showAbout(Context ctx) {
@@ -322,6 +349,9 @@ public class AsciiCamera extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
+		if (mBanner != null) {
+			mBanner.setRefreshTime(0);
+		}
 		if (m_camera != null ) {
 			m_camera.release();		
 		}

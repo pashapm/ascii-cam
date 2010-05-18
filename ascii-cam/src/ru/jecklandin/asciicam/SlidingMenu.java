@@ -76,7 +76,7 @@ public class SlidingMenu extends Activity {
 	Button m_less;
 	Button m_share;
 	ImageView m_cowimage;
-	static MobclixMMABannerXLAdView adview_banner;
+//	static MobclixMMABannerXLAdView adview_banner;
 	
 	Map<String, View> m_views;  
 
@@ -86,7 +86,7 @@ public class SlidingMenu extends Activity {
 
 	private boolean m_mayAction = true;
 	
-	private boolean is_ext  = false;
+	private static boolean is_ext  = false;
 	@Override  
 	protected void onStart() {
 		
@@ -140,9 +140,9 @@ public class SlidingMenu extends Activity {
         m_ext = (LinearLayout)m_ly.findViewById(R.id.extlay);
         
         
-        adview_banner = (MobclixMMABannerXLAdView) m_ly.findViewById(R.id.advertising_banner_view);
+//        adview_banner = (MobclixMMABannerXLAdView) m_ly.findViewById(R.id.advertising_banner_view);
 		//adview_banner.getAd();
-		adview_banner.setRefreshTime(5000);
+//		adview_banner.setRefreshTime(5000);
 //        if (adview_banner == null) {
 //        	adview_banner = (MobclixMMABannerXLAdView) m_ly.findViewById(R.id.advertising_banner_view);
 //    		//adview_banner.getAd();
@@ -172,9 +172,9 @@ public class SlidingMenu extends Activity {
     	m_more = (Button) m_ly.findViewById(R.id.morebutton);
     	m_less = (Button) m_ly.findViewById(R.id.less);
     	m_share = (Button) m_ly.findViewById(R.id.share);
-    	m_cowimage =  (ImageView) m_ly.findViewById(R.id.cow); 
+//    	m_cowimage =  (ImageView) m_ly.findViewById(R.id.cow); 
     	  
-    	m_cowimage.setImageResource(R.drawable.cowedit);
+//    	m_cowimage.setImageResource(R.drawable.cowedit);
     	
         m_textSizeSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			
@@ -364,11 +364,11 @@ public class SlidingMenu extends Activity {
 		if (!b) {
 			m_ext.setVisibility(View.GONE);
 			m_biglay.setVisibility(View.VISIBLE);
-			m_cowimage.setImageResource(R.drawable.cowedit);
+//			m_cowimage.setImageResource(R.drawable.cowedit);
 		} else { 
 			m_ext.setVisibility(View.VISIBLE);
 			m_biglay.setVisibility(View.GONE);
-			m_cowimage.setImageResource(R.drawable.cowsave);
+//			m_cowimage.setImageResource(R.drawable.cowsave);
 		}
 	}
 	

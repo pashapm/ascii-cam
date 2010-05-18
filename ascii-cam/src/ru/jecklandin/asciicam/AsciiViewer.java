@@ -12,11 +12,12 @@ import android.graphics.Matrix;
 import android.graphics.Movie;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
-class AsciiViewer extends ImageView {
+public class AsciiViewer extends ImageView {
 	
 	static int DEFAUL_FONT = 6;
 	enum ActionMode {SAVE, EDIT};
@@ -42,8 +43,14 @@ class AsciiViewer extends ImageView {
 	 */
 	private String RESIZING;
 	private String ASCIIZATION;
+	  
+	public AsciiViewer(Context context, AttributeSet set) {  
+		super(context, set);
+		RESIZING = context.getString(R.string.resizing);
+		ASCIIZATION = context.getString(R.string.processing);
+	}
 	
-	AsciiViewer(Context context) {
+	public AsciiViewer(Context context) {
 		super(context);
 		RESIZING = context.getString(R.string.resizing);
 		ASCIIZATION = context.getString(R.string.processing);
@@ -72,7 +79,7 @@ class AsciiViewer extends ImageView {
 		if (m_text!=null && AsciiCamera.s_grayscale) {
 			m_matrix.setRotate(-90,0,0);
 			m_matrix.postTranslate(0, AsciiCamera.s_screenHeight);	
-		}
+		} 
 		m_matrix.postTranslate(m_shiftX, m_shiftY);
 		
 		Canvas canvas2 = null;

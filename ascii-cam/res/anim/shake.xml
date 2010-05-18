@@ -15,5 +15,15 @@
 -->
 
 <set xmlns:android="http://schemas.android.com/apk/res/android">
-    <alpha android:fromAlpha="0" android:toAlpha="1" android:duration="400" />
+  <rotate
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0"
+    android:toDegrees="90"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:repeatCount="1"
+    android:duration="0" />
+    <alpha android:startOffset="1000" android:fromAlpha="1" android:toAlpha="1" android:duration="1000000" />
 </set>
+
+
