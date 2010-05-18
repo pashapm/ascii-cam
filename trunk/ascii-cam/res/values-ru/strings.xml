@@ -25,4 +25,5 @@
     <string name="settingssaved"> Новое значение по умолчанию сохранено </string>
     <string name="more"> Сохранить </string>
     <string name="less"> Редактировать </string>
+    <string name="share"> Передать </string>
 </resources>
