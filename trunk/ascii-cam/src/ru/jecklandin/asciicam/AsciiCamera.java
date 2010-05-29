@@ -64,7 +64,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import static android.provider.MediaStore.Images.Media.*;
 
-import com.mobclix.android.sdk.MobclixMMABannerXLAdView;
 import com.nullwire.trace.ExceptionHandler;
 
 public class AsciiCamera extends Activity { 
@@ -100,7 +99,7 @@ public class AsciiCamera extends Activity {
 	PicPreviewCallback m_prCallback = new PicPreviewCallback();
 	private Facade m_facade;
 	  
-	private MobclixMMABannerXLAdView mBanner;
+	//private MobclixMMABannerXLAdView mBanner;
 	
 	private static String s_aboutString = "© Evgeny Balandin, 2010 \nbalandin.evgeny@gmail.com";
 	
@@ -269,9 +268,9 @@ public class AsciiCamera extends Activity {
 		 
 		setContentView(m_viewer);
 		
-		getWindow().addContentView(lay, pars);
-		mBanner = (MobclixMMABannerXLAdView) lay.findViewById(R.id.advertising_banner_view);
-		mBanner.getAd();
+//		getWindow().addContentView(lay, pars);
+//		mBanner = (MobclixMMABannerXLAdView) lay.findViewById(R.id.advertising_banner_view);
+//		mBanner.getAd();
 	}
     
     public static void showAbout(Context ctx) {
@@ -349,9 +348,9 @@ public class AsciiCamera extends Activity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if (mBanner != null) {
-			mBanner.setRefreshTime(0);
-		}
+//		if (mBanner != null) {
+//			mBanner.setRefreshTime(0);
+//		}
 		if (m_camera != null ) {
 			m_camera.release();		
 		}

@@ -7,10 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-
-
-import com.mobclix.android.sdk.MobclixMMABannerXLAdView;
-
 import android.R.anim;
 import android.app.Activity;
 import android.content.Context;
