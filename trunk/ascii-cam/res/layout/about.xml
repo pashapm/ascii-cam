@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:background="#060032" android:layout_height="fill_parent"
+	android:layout_width="fill_parent" android:orientation="vertical" android:gravity="center_horizontal">
+
+
+
+
+<LinearLayout android:id="@+id/LinearLayout03" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginTop="20dip"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/cow_pic" android:src="@drawable/icon" android:layout_marginRight="10dip"></ImageView><LinearLayout android:id="@+id/LinearLayout02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="vertical"><TextView android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textStyle="bold" android:layout_alignParentRight="true" android:text="Evgeny Balandin, 2010  " android:textSize="15sp" android:textColor="#33baff"></TextView><TextView android:text="@+id/TextView02" android:layout_below="@id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/links_text" android:layout_marginRight="40dip" android:layout_alignParentRight="true"></TextView></LinearLayout></LinearLayout>
+
+
+<TextView android:id="@+id/TextView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:layout_marginTop="10dip" android:text="@string/see_other" android:textSize="17sp"></TextView>
+
+<ListView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@android:id/list"></ListView>
+
+</LinearLayout>
