@@ -12,6 +12,7 @@ import com.flurry.android.FlurryAgent;
 import android.R.anim;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -322,8 +323,10 @@ public class SlidingMenu extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				AsciiCamera.showAbout(SlidingMenu.this);
+//				AsciiCamera.showAbout(SlidingMenu.this);
 				FlurryAgent.onEvent("onAbout");
+				Intent i = new Intent(SlidingMenu.this, About.class);
+				startActivity(i);
 			}
 		});
         

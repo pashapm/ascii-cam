@@ -256,18 +256,18 @@ public class AsciiCamera extends Activity {
 		setContentView(m_viewer);
 	}
     
-    public static void showAbout(Context ctx) {
-    	AlertDialog.Builder d = new AlertDialog.Builder(ctx);
-		d.setIcon(R.drawable.icon);
-		TextView tw = new TextView(ctx);
-		tw.setText(AsciiCamera.s_aboutString + "\n\n" + ctx.getString(R.string.credits));
-		tw.setPadding(10, 10, 10, 10);  
-		Linkify.addLinks(tw, Linkify.EMAIL_ADDRESSES);
-		d.setView(tw);
-		d.setTitle(ctx.getResources().getString(R.string.app_name));
-		d.create();
-		d.show();
-    }
+//    public static void showAbout(Context ctx) {
+//    	AlertDialog.Builder d = new AlertDialog.Builder(ctx);
+//		d.setIcon(R.drawable.icon);
+//		TextView tw = new TextView(ctx);
+//		tw.setText(AsciiCamera.s_aboutString + "\n\n" + ctx.getString(R.string.credits));
+//		tw.setPadding(10, 10, 10, 10);  
+//		Linkify.addLinks(tw, Linkify.EMAIL_ADDRESSES);
+//		d.setView(tw);
+//		d.setTitle(ctx.getResources().getString(R.string.app_name));
+//		d.create();
+//		d.show();
+//    }
     
 //	@Override
 //	public boolean onPrepareOptionsMenu(Menu menu) {
