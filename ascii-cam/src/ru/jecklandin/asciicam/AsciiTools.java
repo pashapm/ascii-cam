@@ -1,16 +1,10 @@
 package ru.jecklandin.asciicam;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.jecklandin.asciicam.AsciiCamera.ConvertingAsyncTask;
 import ru.jecklandin.asciicam.AsciiCamera.ProgressCallback;
-
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.AsyncTask;
-import android.util.Log;
 
 public class AsciiTools {
 
@@ -117,24 +111,12 @@ public class AsciiTools {
 	}
 	
 	private static float getAverageValue(Bitmap bm, int x, int y, int sq_size) {
-		float hsv[] = new float[3];
-		float val_sum = 0;
-		if (true) { //low quality
-			int p = bm.getPixel(x*sq_size+sq_size/2, y*sq_size+sq_size/2);
-			return AsciiTools.getValue(p);
-		} else {
-			for (int i=0; i<sq_size;++i) 
-			for (int j=0; j<sq_size;++j) {
-				Color.colorToHSV(bm.getPixel(x*sq_size+i, y*sq_size+j), hsv);
-				val_sum += hsv[2];
-			}
-			return val_sum * 10 /(sq_size*sq_size);	
-		}
+		int p = bm.getPixel(x*sq_size+sq_size/2, y*sq_size+sq_size/2);
+		return AsciiTools.getValue(p);
 	}
 	
 	private static int getNeatValue(Bitmap bm, int x, int y, int sq_size) {
 		int res = 0;
-		float hsv[] = new float[3];
 		for (int i=0; i<sq_size;++i) 
 			for (int j=0; j<sq_size;++j) {
 				float val = AsciiTools.getValue(bm.getPixel(x*sq_size+i, y*sq_size+j));
@@ -148,12 +130,9 @@ public class AsciiTools {
 					else if (i==0 && j==0) 
 						res |= (1<<3); // 1000
 				}
-				//Log.d("pix"+i+":"+j, ""+hsv[2]);
 			}
 		return res;
 	}
-	
-		
 }
 
 class ColoredValue {

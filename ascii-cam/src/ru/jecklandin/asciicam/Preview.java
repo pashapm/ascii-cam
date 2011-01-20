@@ -1,11 +1,15 @@
 package ru.jecklandin.asciicam;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.hardware.Camera;
+import android.os.Build;
 import android.text.Layout;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -78,10 +82,46 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
     		return;
     	}
 
+    	
+    	//get proper size
+    	int version = Integer.parseInt(Build.VERSION.SDK);
+    	if (version >= 5) {
+    		List<Camera.Size> sizes = getSizes(parameters);
+    		
+    		Camera.Size rightSize = null;
+    		int minDiff = Integer.MAX_VALUE;
+    		for (Camera.Size size : sizes) {
+    			int d = w - size.width;
+    			if (d > 0 && d < minDiff) {
+    				minDiff = d;
+    				rightSize = size;
+    			}
+    		}
+    		parameters.setPreviewSize(rightSize.width, rightSize.height);
+    	} else {
+    		parameters.setPreviewSize(w, h);
+    	}
+    	
         parameters.setPreviewSize(w, h);
         mCamera.setParameters(parameters);
         mCamera.startPreview();
     }
+    
+    private List<Camera.Size> getSizes(Camera.Parameters parameters) {
+    	Method getFormats = null;
+		for (Method m : Camera.Parameters.class.getDeclaredMethods()) {
+			if (m.getName().equals("getSupportedPreviewSizes")) {
+				getFormats = m;
+				break;
+			}
+		}  
+		try {
+			return (List<Camera.Size>) getFormats.invoke(parameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+    } 
 
 	public static void setcamOpen(boolean b) {
 		camOpen = b;

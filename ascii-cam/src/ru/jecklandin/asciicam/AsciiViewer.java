@@ -1,19 +1,13 @@
 package ru.jecklandin.asciicam;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Movie;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
@@ -201,8 +195,4 @@ public class AsciiViewer extends ImageView {
 		m_actionMode = mode;
 		showContextMenu();
 	}
-	
-
-	
-	
 }

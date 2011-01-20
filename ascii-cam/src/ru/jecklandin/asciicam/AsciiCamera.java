@@ -37,6 +37,7 @@ import android.hardware.Camera;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore.Images;
@@ -64,9 +65,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import static android.provider.MediaStore.Images.Media.*;
 
+import com.flurry.android.FlurryAgent;
 import com.nullwire.trace.ExceptionHandler;
 
 public class AsciiCamera extends Activity { 
+	
+	public static final String FLURRY_KEY = "5XTA9JZU68AALQHQNJYR";
 	
 	//screen size
 	static int s_screenHeight ;
@@ -99,8 +103,6 @@ public class AsciiCamera extends Activity {
 	PicPreviewCallback m_prCallback = new PicPreviewCallback();
 	private Facade m_facade;
 	  
-	//private MobclixMMABannerXLAdView mBanner;
-	
 	private static String s_aboutString = "© Evgeny Balandin, 2010 \nbalandin.evgeny@gmail.com";
 	
 	public static AsciiCamera s_instance;
@@ -155,10 +157,6 @@ public class AsciiCamera extends Activity {
     		return;
         }
         
-        
-        
-        
-        
         m_camera = Camera.open(); 
          
 //        dont work on android > 2.0  
@@ -169,9 +167,6 @@ public class AsciiCamera extends Activity {
         m_preview = new Preview(this, m_camera);
         setContentView(m_preview);  
         
-
-        
-
         //add button to the content view
         RelativeLayout lay = (RelativeLayout)View.inflate(this, R.layout.relbutton, null);
         ImageButton imb = (ImageButton) lay.findViewById(R.id.ShotButton);
@@ -181,13 +176,10 @@ public class AsciiCamera extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-//				Intent i = new Intent(AsciiCamera.this, AsciiViewerActivity.class);
-//				AsciiCamera.this.startActivity(i);
 				makeShot();
 			}
 		});
           
-        
         Button b = (Button) lay.findViewById(R.id.PickImage);
         b.setOnClickListener(new Button.OnClickListener() {
 			
@@ -199,12 +191,16 @@ public class AsciiCamera extends Activity {
         
         getWindow().addContentView(lay, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT)); 
    
-        //registerForContextMenu(m_viewer);
         reset();
     }  
     
+    @Override
+    protected void onStart() {
+    	FlurryAgent.onStartSession(this, FLURRY_KEY);
+    	super.onStart();
+    }
+    
     public Facade getFacade() {
-    	//TODO INNER CLASSES
     	if (m_facade == null) { 
     		m_facade = new Facade();;
     	} 
@@ -252,25 +248,12 @@ public class AsciiCamera extends Activity {
 	void makeShot() {
 		m_photoMode = false;
 		m_camera.takePicture(null, null, new PicSettingCallback(this));
-//		setContentView(m_viewer);
 		setContentImageViewer();
 		m_camera.stopPreview(); 
 	}   
 	
 	void setContentImageViewer() {
-		LayoutInflater infl = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		LinearLayout lay = (LinearLayout) infl.inflate(R.layout.asciiviewer, null);
-		ViewGroup.LayoutParams pars = new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
-//		m_viewer.setLayoutParams(pars);
-//		lay.removeView(lay.findViewById(R.id.viewer));
-//		lay.addView(m_viewer, pars);
-//		setContentView(lay);
-		 
 		setContentView(m_viewer);
-		
-//		getWindow().addContentView(lay, pars);
-//		mBanner = (MobclixMMABannerXLAdView) lay.findViewById(R.id.advertising_banner_view);
-//		mBanner.getAd();
 	}
     
     public static void showAbout(Context ctx) {
@@ -286,41 +269,39 @@ public class AsciiCamera extends Activity {
 		d.show();
     }
     
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-//		menu.getItem(0).setVisible(!m_photoMode);
-//		menu.getItem(1).setVisible(!m_photoMode);
-		return super.onPrepareOptionsMenu(menu);
-	}
+//	@Override
+//	public boolean onPrepareOptionsMenu(Menu menu) {
+//		return super.onPrepareOptionsMenu(menu);
+//	}
 
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case 0:
-			savePicture(true);
-			break;
-		case 1:
-			saveText();
-			break;
-		case 2:
-			changeResolution();
-			break;
-		case 3:
-			flipGrayscale();
-			break;
-		case 4:
-			invert();
-			break;
-		case 5:
-			m_viewer.changeTextSize(-1);
-			break;
-		case 6:
-			m_viewer.changeTextSize(1);
-			break;
-		default:
-		}
-		return true;
-	}
+//	@Override
+//	public boolean onContextItemSelected(MenuItem item) {
+//		switch (item.getItemId()) {
+//		case 0:
+//			savePicture(true);
+//			break;
+//		case 1:
+//			saveText();
+//			break;
+//		case 2:
+//			changeResolution();
+//			break;
+//		case 3:
+//			flipGrayscale();
+//			break;
+//		case 4:
+//			invert();
+//			break;
+//		case 5:
+//			m_viewer.changeTextSize(-1);
+//			break;
+//		case 6:
+//			m_viewer.changeTextSize(1);
+//			break;
+//		default:
+//		}
+//		return true;
+//	}
     
 	protected void colorize(boolean col) {
 		m_viewer.reset();
@@ -333,7 +314,6 @@ public class AsciiCamera extends Activity {
 		AsciiCamera.s_grayscale =! AsciiCamera.s_grayscale;
 	}
     
-    
 	protected void invert() {
 		m_viewer.reset();
     	AsciiCamera.s_inverted =! AsciiCamera.s_inverted;
@@ -341,16 +321,13 @@ public class AsciiCamera extends Activity {
 
 	protected void changeResolution() {
 		m_viewer.reset();
-		//AsciiCamera.s_hiRes =! AsciiCamera.s_hiRes;
 		convert();
 	}
 	
 	@Override
 	protected void onStop() {
 		super.onStop();
-//		if (mBanner != null) {
-//			mBanner.setRefreshTime(0);
-//		}
+		FlurryAgent.onEndSession(this);
 		if (m_camera != null ) {
 			m_camera.release();		
 		}
@@ -849,7 +826,8 @@ public class AsciiCamera extends Activity {
 			AsciiCamera.s_availableSizes = getResolutions();
 			
 			m_viewer.m_bitmap = b1;
-			return AsciiTools.convertColorBitmap(b1, this);	
+			ColoredValue[][] v = AsciiTools.convertColorBitmap(b1, this);	
+			return v;
 		}
 		
 		@Override
@@ -859,7 +837,7 @@ public class AsciiCamera extends Activity {
 
 	}
 	
-	class Facade  {
+	public class Facade  {
 		
 		public void setTextSize(int ts) {
 			m_viewer.setTextSize(ts + 4);
@@ -876,6 +854,7 @@ public class AsciiCamera extends Activity {
 			BitmapSize cursize = new BitmapSize(AsciiCamera.s_defaultBitmap.getWidth(),
 					AsciiCamera.s_defaultBitmap.getHeight());
 			if (! bm.equals(cursize)) {
+				AsciiCamera.s_bitmapSize = bm;
 				convert();
 			}
 		}
