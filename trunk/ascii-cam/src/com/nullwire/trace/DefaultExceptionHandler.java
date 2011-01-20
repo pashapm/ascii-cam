@@ -43,7 +43,7 @@ import ru.jecklandin.asciicam.AsciiCamera;
 
 import android.util.Log;
 
-public class DefaultExceptionHandler implements UncaughtExceptionHandler {
+public class DefaultExceptionHandler implements UncaughtExceptionHandler {   
 
 	private UncaughtExceptionHandler defaultExceptionHandler;
 	

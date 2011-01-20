@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import com.flurry.android.FlurryAgent;
+
 import android.R.anim;
 import android.app.Activity;
 import android.content.Context;
@@ -112,7 +114,7 @@ public class SlidingMenu extends Activity {
 		
 		m_mayAction = true;
 
-		
+		FlurryAgent.onStartSession(this, AsciiCamera.FLURRY_KEY);
 		super.onStart();
 	}
 
@@ -321,6 +323,7 @@ public class SlidingMenu extends Activity {
 			@Override
 			public void onClick(View v) {
 				AsciiCamera.showAbout(SlidingMenu.this);
+				FlurryAgent.onEvent("onAbout");
 			}
 		});
         
@@ -330,6 +333,7 @@ public class SlidingMenu extends Activity {
 			public void onClick(View v) {
 				is_ext =! is_ext;
 				setExtVisible(is_ext);
+				FlurryAgent.onEvent("onMore");
 			};
 		});
         
@@ -350,9 +354,6 @@ public class SlidingMenu extends Activity {
 			}
 		});
         
-        
-
-        
         setContentView(m_ly);
 	}
 	
@@ -360,30 +361,17 @@ public class SlidingMenu extends Activity {
 		if (!b) {
 			m_ext.setVisibility(View.GONE);
 			m_biglay.setVisibility(View.VISIBLE);
-//			m_cowimage.setImageResource(R.drawable.cowedit);
 		} else { 
 			m_ext.setVisibility(View.VISIBLE);
 			m_biglay.setVisibility(View.GONE);
-//			m_cowimage.setImageResource(R.drawable.cowsave);
 		}
 	}
 	
     @Override
     protected void onStop() {
-         super.onStop();
+    	FlurryAgent.onEndSession(this);
+        super.onStop();
     }
-	
-	private void makeOthersTransparent(String name) {
-		Set s = m_views.entrySet();
-		Iterator i = s.iterator();
-		while (i.hasNext()) {
-			Map.Entry pair = (Map.Entry)i.next();
-			View v = (View)pair.getValue();
-			if (v != m_views.get(name)) {
-				v.startAnimation(m_fadeAnimation);
-			}
-		}
-	}
 }
 
 
