@@ -115,7 +115,6 @@ public class AsciiCamera extends Activity {
         
         Handler han = new Handler();
         
-        //disabled for chinese
         ExceptionHandler.register(this, "http://android-exceptions-handler.appspot.com/exception.groovy",han);
         
         getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
