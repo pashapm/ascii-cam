@@ -51,6 +51,8 @@ public class NewMenu extends Activity implements OnClickListener {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
         
+        ScrProps.initialize(this);
+        
 		setContentView(R.layout.newmenu);
 
 //		mFacade = AsciiCamera.s_instance.getFacade();
