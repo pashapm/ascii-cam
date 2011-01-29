@@ -3,7 +3,9 @@ package ru.jecklandin.asciicam;
 import com.flurry.android.FlurryAgent;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +15,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewStub.OnInflateListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -21,7 +25,9 @@ import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class NewMenu extends Activity implements OnClickListener, OnCheckedChangeListener {
 
@@ -60,7 +66,7 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
         
 		setContentView(R.layout.newmenu);
 
-//		mFacade = AsciiCamera.s_instance.getFacade();
+		mFacade = AsciiCamera.s_instance.getFacade();
 		
 		mSizeBtn = (RadioButton) findViewById(R.id.size_btn);
 		mColorBtn = (RadioButton) findViewById(R.id.color_btn);
@@ -96,64 +102,130 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
     	m_checkInvert.setTypeface(tf);
     	((TextView) findViewById(R.id.res_label)).setTypeface(tf);
     	
-    	
+	}
+	
+	private void setListeners() {
 		mSizeBtn.setOnCheckedChangeListener(this);
 		mColorBtn.setOnCheckedChangeListener(this);
 		mMoreBtn.setOnCheckedChangeListener(this);
+		
+		m_bwCheck.setOnCheckedChangeListener(this);
+		m_checkInvert.setOnCheckedChangeListener(this);
+		m_gsRadio.setOnCheckedChangeListener(this);
+		m_colRadio.setOnCheckedChangeListener(this);
+		
+		m_butPic.setOnClickListener(this);
+		m_butText.setOnClickListener(this);
+		m_butReset.setOnClickListener(this);
+		m_butAbout.setOnClickListener(this);
+		m_share.setOnClickListener(this);
+		
+		m_textSizeSeek.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+        	int progress = 0;
+        	
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				AsciiCamera.s_instance.getFacade().setTextSize(this.progress);
+			}
+			 
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				this.progress = progress / 10;
+			}
+		});
+		
+        m_imsizeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+//				if ((m_imsizeSpinner.getTag() != null) 
+//						&& (((Integer)m_imsizeSpinner.getTag()).intValue() != arg2)) {
+//					mFacade.setImageSize(AsciiCamera.s_availableSizes[arg2]);
+//					m_imsizeSpinner.setTag(arg2);
+//				}
+				   
+				if (mMayAction && (last.equals(-1) || !last.equals(arg2))) {
+					mFacade.setImageSize(AsciiCamera.s_availableSizes[arg2]);
+					last = arg2;
+				}
+				
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {}
+		});
 	}
+	
+	Integer last = -1;
 	
 	@Override  
 	protected void onStart() {
-		
 		hideAll();
-		
-		mMayAction = false;
-		m_textSizeSeek.setProgress(10);
-//		m_textSizeSeek.setProgress(mFacade.getTextSize()*10);
-//		m_imsizeSpinner.setSelection(3);
-//		BitmapSize bms[] = AsciiCamera.s_availableSizes;
-//		for (int i=0; i<bms.length;++i) {
-//			if (bms[i].equals(AsciiCamera.s_bitmapSize)) {
-//				m_imsizeSpinner.setSelection(i);
-//			}
-//		}
-//
-//		if (AsciiCamera.s_grayscale) {
-//			m_gsRadio.setChecked(true);  
-//		} else { 
-//			m_colRadio.setChecked(true);
-//		}
-//		
-//		m_checkInvert.setChecked(AsciiCamera.s_inverted);
-//		m_bwCheck.setChecked(AsciiCamera.s_bw);
-//		
-//		mMayAction = true;
-//
-//		FlurryAgent.onStartSession(this, AsciiCamera.FLURRY_KEY);
+		FlurryAgent.onStartSession(this, AsciiCamera.FLURRY_KEY);
+		initWidgets();
+		setListeners();
 		super.onStart();
+	}
+	
+	private void initWidgets() {
+		mMayAction = false;
+		
+		ArrayAdapter<BitmapSize> imsize_adapter = new ArrayAdapter<BitmapSize>(
+				this, android.R.layout.simple_spinner_item, mFacade.getAvailableSizes());
+		m_imsizeSpinner.setAdapter(imsize_adapter);
+		
+		m_textSizeSeek.setProgress(10);
+		m_textSizeSeek.setProgress(mFacade.getTextSize()*10);
+		m_imsizeSpinner.setSelection(3);
+		BitmapSize bms[] = AsciiCamera.s_availableSizes;
+		for (int i=0; i<bms.length;++i) {
+			if (bms[i].equals(AsciiCamera.s_bitmapSize)) {
+				m_imsizeSpinner.setSelection(i);
+			}
+		}
+
+		if (AsciiCamera.s_grayscale) {
+			m_gsRadio.setChecked(true);  
+		} else { 
+			m_colRadio.setChecked(true);
+		}
+		
+		m_checkInvert.setChecked(AsciiCamera.s_inverted);
+		m_bwCheck.setChecked(AsciiCamera.s_bw);
+		
+		mMayAction = true;
 	}
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		
-		//main buttons
-		
-		case R.id.size_btn:
-			hideAll();
-			mSizeLay.setVisibility(View.VISIBLE);
+		case R.id.save_pic:
+			finish();
+			mFacade.savePicture();
 			break;
-		case R.id.color_btn:
-			hideAll();
-			mColorLay.setVisibility(View.VISIBLE);
+		case R.id.save_text:
+			finish();
+			mFacade.saveText();
 			break;
-		case R.id.more_btn:
-			hideAll();
-			mMoreLay.setVisibility(View.VISIBLE);
+		case R.id.btn_reset:
+			mFacade.reset();
+			initWidgets();
 			break;
-			
-		//particular buttons
-			
+		case R.id.about_btn:
+			FlurryAgent.onEvent("onAbout");
+			Intent i = new Intent(this, About.class);
+			startActivity(i);
+			break;
+		case R.id.share:
+			mFacade.share();
+			break;
 		default:
 			break;
 		}
@@ -177,34 +249,56 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
         super.onStop();
     }
 	
-	private void setListeners() {
-		
-	}
+
 
 	@Override
-	public void onCheckedChanged(CompoundButton arg0, boolean state) {
-		if (!state) {
-			return;
-		}
+	public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
 		
 		switch (arg0.getId()) {
 		
 		//main buttons
-		
 		case R.id.size_btn:
-			hideAll();
-			mSizeLay.setVisibility(View.VISIBLE);
+			if (isChecked) {
+				hideAll();
+				mSizeLay.setVisibility(View.VISIBLE);
+			}
 			break;
 		case R.id.color_btn:
-			hideAll();
-			mColorLay.setVisibility(View.VISIBLE);
+			if (isChecked) {
+				hideAll();
+				mColorLay.setVisibility(View.VISIBLE);
+			}
 			break;
 		case R.id.more_btn:
-			hideAll();
-			mMoreLay.setVisibility(View.VISIBLE);
+			if (isChecked) {
+				hideAll();
+				mMoreLay.setVisibility(View.VISIBLE);
+			}
 			break;
 			
 		//particular buttons
+		case R.id.check_invert:
+			mFacade.setInverted(isChecked);
+			break;
+		case R.id.radio_gs:
+			mFacade.setGrayscale(isChecked);
+			if (isChecked) {
+				m_bwCheck.setEnabled(true);
+				m_checkInvert.setEnabled(true);
+				m_butText.setText(R.string.saveastext);
+			}
+			break;
+		case R.id.radio_color:
+			mFacade.setColorized(isChecked);
+			if (isChecked) {
+				m_bwCheck.setEnabled(false);
+				m_checkInvert.setEnabled(false);
+				m_butText.setText(R.string.saveashtml);
+			}
+			break;
+		case R.id.check_bw:
+			mFacade.setBW(isChecked);
+			break;
 			
 		default:
 			break;
