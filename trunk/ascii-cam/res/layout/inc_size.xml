@@ -9,16 +9,14 @@
 	android:paddingTop="20dip" android:minWidth="240dip">
 	<LinearLayout android:id="@+id/LinearLayout03"
 		android:layout_height="wrap_content" android:layout_width="fill_parent"
-		android:layout_weight="1">
-		<TextView android:id="@+id/TextView02" android:layout_height="wrap_content"
+		android:layout_weight="1" android:orientation="vertical">
+		<TextView android:layout_height="wrap_content"
 			android:layout_width="fill_parent" android:layout_gravity="center"
 			android:layout_weight="1.5" android:paddingLeft="5sp"
 			android:gravity="center" android:text="@string/imsize"
-			android:textSize="20sp" android:textColor="#c1e7ef"></TextView>
+			android:textColor="#c1e7ef" android:id="@+id/res_label" android:textSize="16sp"></TextView>
 
-		<Spinner android:layout_weight="1" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:layout_gravity="center_vertical"
-			android:id="@+id/spinner_resolution"></Spinner>
+		<Spinner android:layout_height="wrap_content" android:id="@+id/spinner_resolution" android:layout_width="wrap_content" android:minWidth="190dip" android:layout_gravity="center" android:layout_marginBottom="20dip"></Spinner>
 	</LinearLayout>
 	<LinearLayout android:id="@+id/LinearLayout04"
 		android:orientation="horizontal" android:layout_height="wrap_content"

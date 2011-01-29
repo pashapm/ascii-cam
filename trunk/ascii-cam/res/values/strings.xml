@@ -2,7 +2,7 @@
 <resources>
     
     <string name="app_name">AsciiCamera</string>
-    <string name="about">About</string>
+    <string name="about">Info</string>
     <string name="bw">B and W</string>
     <string name="grayscale">Grayscale</string>
     <string name="savedto">was saved to</string>
