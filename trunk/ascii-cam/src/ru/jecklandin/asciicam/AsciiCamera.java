@@ -34,6 +34,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -166,6 +167,23 @@ public class AsciiCamera extends Activity {
         m_preview = new Preview(this, m_camera);
         setContentView(m_preview);  
         
+        m_preview.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (m_camera != null) {
+					m_camera.autoFocus(new AutoFocusCallback() {
+						
+						@Override
+						public void onAutoFocus(boolean success, Camera camera) {
+						   	
+						}    
+					});  
+				}
+				
+			}
+		});  
+        
         //add button to the content view
         RelativeLayout lay = (RelativeLayout)View.inflate(this, R.layout.relbutton, null);
         ImageButton imb = (ImageButton) lay.findViewById(R.id.ShotButton);
@@ -255,54 +273,7 @@ public class AsciiCamera extends Activity {
 		setContentView(m_viewer);
 	}
     
-//    public static void showAbout(Context ctx) {
-//    	AlertDialog.Builder d = new AlertDialog.Builder(ctx);
-//		d.setIcon(R.drawable.icon);
-//		TextView tw = new TextView(ctx);
-//		tw.setText(AsciiCamera.s_aboutString + "\n\n" + ctx.getString(R.string.credits));
-//		tw.setPadding(10, 10, 10, 10);  
-//		Linkify.addLinks(tw, Linkify.EMAIL_ADDRESSES);
-//		d.setView(tw);
-//		d.setTitle(ctx.getResources().getString(R.string.app_name));
-//		d.create();
-//		d.show();
-//    }
-    
-//	@Override
-//	public boolean onPrepareOptionsMenu(Menu menu) {
-//		return super.onPrepareOptionsMenu(menu);
-//	}
-
-//	@Override
-//	public boolean onContextItemSelected(MenuItem item) {
-//		switch (item.getItemId()) {
-//		case 0:
-//			savePicture(true);
-//			break;
-//		case 1:
-//			saveText();
-//			break;
-//		case 2:
-//			changeResolution();
-//			break;
-//		case 3:
-//			flipGrayscale();
-//			break;
-//		case 4:
-//			invert();
-//			break;
-//		case 5:
-//			m_viewer.changeTextSize(-1);
-//			break;
-//		case 6:
-//			m_viewer.changeTextSize(1);
-//			break;
-//		default:
-//		}
-//		return true;
-//	}
-    
-	protected void colorize(boolean col) {
+   	protected void colorize(boolean col) {
 		m_viewer.reset();
 		AsciiCamera.s_colorized = col;
 		AsciiCamera.s_grayscale = !col;

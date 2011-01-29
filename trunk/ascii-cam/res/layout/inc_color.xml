@@ -17,7 +17,7 @@
 				android:layout_weight="1" android:text="@string/bw"
 				android:layout_height="fill_parent"
 				android:textSize="14sp" android:paddingRight="10dip"
-				android:visibility="visible" android:gravity="center" android:id="@+id/check_bw" android:textColor="@color/str_state_color"></CheckBox>
+				android:visibility="visible" android:gravity="center" android:id="@+id/check_bw" android:textColor="@color/str_state_color" android:enabled="false"></CheckBox>
 
 		</RadioGroup>
 </LinearLayout>
