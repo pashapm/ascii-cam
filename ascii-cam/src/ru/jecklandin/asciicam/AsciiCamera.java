@@ -234,7 +234,7 @@ public class AsciiCamera extends Activity {
 			 } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
 				 m_viewer.shift(15, 0);
 			 } else if (keyCode == KeyEvent.KEYCODE_MENU) {
-				 Intent i = new Intent(this, SlidingMenu.class);
+				 Intent i = new Intent(this, NewMenu.class);
 				 startActivity(i); 
 				 return true;
 			 }
