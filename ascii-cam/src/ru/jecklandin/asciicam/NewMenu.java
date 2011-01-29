@@ -13,16 +13,18 @@ import android.view.View.OnClickListener;
 import android.view.ViewStub.OnInflateListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
-public class NewMenu extends Activity implements OnClickListener {
+public class NewMenu extends Activity implements OnClickListener, OnCheckedChangeListener {
 
-	private Button mSizeBtn;
-	private Button mColorBtn;
-	private Button mMoreBtn;
+	private RadioButton mSizeBtn;
+	private RadioButton mColorBtn;
+	private RadioButton mMoreBtn;
 	
 	private LinearLayout mSizeLay;
 	private LinearLayout mColorLay;
@@ -57,9 +59,9 @@ public class NewMenu extends Activity implements OnClickListener {
 
 //		mFacade = AsciiCamera.s_instance.getFacade();
 		
-		mSizeBtn = (Button) findViewById(R.id.size_btn);
-		mColorBtn = (Button) findViewById(R.id.color_btn);
-		mMoreBtn = (Button) findViewById(R.id.more_btn);
+		mSizeBtn = (RadioButton) findViewById(R.id.size_btn);
+		mColorBtn = (RadioButton) findViewById(R.id.color_btn);
+		mMoreBtn = (RadioButton) findViewById(R.id.more_btn);
 		
 		mSizeLay = (LinearLayout) findViewById(R.id.include02);
 		mColorLay = (LinearLayout) findViewById(R.id.include01);
@@ -77,9 +79,9 @@ public class NewMenu extends Activity implements OnClickListener {
     	m_butAbout = (Button) findViewById(R.id.about_btn);
     	m_share = (Button) findViewById(R.id.share);
 		
-		mSizeBtn.setOnClickListener(this);
-		mColorBtn.setOnClickListener(this);
-		mMoreBtn.setOnClickListener(this);
+		mSizeBtn.setOnCheckedChangeListener(this);
+		mColorBtn.setOnCheckedChangeListener(this);
+		mMoreBtn.setOnCheckedChangeListener(this);
 	}
 	
 	@Override  
@@ -159,6 +161,36 @@ public class NewMenu extends Activity implements OnClickListener {
 	
 	private void setListeners() {
 		
+	}
+
+	@Override
+	public void onCheckedChanged(CompoundButton arg0, boolean state) {
+		if (!state) {
+			return;
+		}
+		
+		switch (arg0.getId()) {
+		
+		//main buttons
+		
+		case R.id.size_btn:
+			hideAll();
+			mSizeLay.setVisibility(View.VISIBLE);
+			break;
+		case R.id.color_btn:
+			hideAll();
+			mColorLay.setVisibility(View.VISIBLE);
+			break;
+		case R.id.more_btn:
+			hideAll();
+			mMoreLay.setVisibility(View.VISIBLE);
+			break;
+			
+		//particular buttons
+			
+		default:
+			break;
+		}
 	}
 
 }

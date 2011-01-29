@@ -2,7 +2,7 @@
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="wrap_content"
-  android:layout_height="wrap_content" android:orientation="vertical"><LinearLayout android:id="@+id/LinearLayout05"
+  android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/more_bg" android:paddingLeft="15dip" android:paddingTop="5dip" android:paddingRight="5dip" android:paddingBottom="5dip"><LinearLayout android:id="@+id/LinearLayout05"
 			android:layout_above="@+id/lessbutton" android:background="#00eeeeee" android:layout_width="fill_parent" android:layout_height="wrap_content" android:minHeight="100dip">
 			<Button android:layout_width="fill_parent"
 				android:layout_weight="1" android:typeface="monospace"
@@ -13,8 +13,7 @@
 				android:layout_height="fill_parent" android:layout_weight="1" android:drawableTop="@drawable/astext" android:textSize="15sp" android:minHeight="50dip" android:id="@+id/save_text"></Button>
 
 		<Button android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="1" android:typeface="monospace" android:id="@+id/share" android:drawableTop="@drawable/share" android:text="@string/share" android:textSize="15sp" android:minHeight="50dip"></Button></LinearLayout><LinearLayout android:id="@+id/LinearLayout09"
-			android:layout_weight="1" android:background="#cccccc"
-			android:layout_height="wrap_content" android:layout_width="fill_parent"
+			android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="fill_parent"
 			android:orientation="horizontal">
 
 

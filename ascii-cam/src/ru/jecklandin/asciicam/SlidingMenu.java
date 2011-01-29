@@ -183,7 +183,7 @@ public class SlidingMenu extends Activity {
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				AsciiCamera.s_instance.getFacade().setTextSize(this.progress);
 			}
-			
+			 
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
 				m_biglay.setBackgroundColor(Color.parseColor("#88ffffff"));
