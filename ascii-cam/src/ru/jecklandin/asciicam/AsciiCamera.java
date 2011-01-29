@@ -512,13 +512,13 @@ public class AsciiCamera extends Activity {
 			@Override
 			public void ok(String s) {
 				processSavingText(s);
-				Intent i = new Intent(AsciiCamera.this, SlidingMenu.class);
+				Intent i = new Intent(AsciiCamera.this, NewMenu.class);
 				startActivity(i); 
 			}
 
 			@Override
 			public void cancel() {
-				Intent i = new Intent(AsciiCamera.this, SlidingMenu.class);
+				Intent i = new Intent(AsciiCamera.this, NewMenu.class);
 				startActivity(i); 
 			}
 		}, this);
@@ -575,13 +575,13 @@ public class AsciiCamera extends Activity {
 			@Override
 			public void ok(String s) {
 				processSavingPicture(s, b);
-				Intent i = new Intent(AsciiCamera.this, SlidingMenu.class);
+				Intent i = new Intent(AsciiCamera.this, NewMenu.class);
 				startActivity(i); 
 			}
 
 			@Override
 			public void cancel() {
-				Intent i = new Intent(AsciiCamera.this, SlidingMenu.class);
+				Intent i = new Intent(AsciiCamera.this, NewMenu.class);
 				startActivity(i); 
 			}
 		}, this);
@@ -849,10 +849,18 @@ public class AsciiCamera extends Activity {
 			}
 		}
 		
+		BitmapSize lastSize = new BitmapSize(AsciiCamera.s_defaultBitmap.getWidth(),
+				AsciiCamera.s_defaultBitmap.getHeight());
+		
 		public void setImageSize(BitmapSize bm) {
-			BitmapSize cursize = new BitmapSize(AsciiCamera.s_defaultBitmap.getWidth(),
-					AsciiCamera.s_defaultBitmap.getHeight());
-			if (! bm.equals(cursize)) {
+//			BitmapSize cursize = new BitmapSize(AsciiCamera.s_defaultBitmap.getWidth(),
+//					AsciiCamera.s_defaultBitmap.getHeight());
+//			if (! bm.equals(cursize)) {
+//				AsciiCamera.s_bitmapSize = bm;
+//				convert();
+//			}
+			
+			if (! bm.equals(lastSize)) {
 				AsciiCamera.s_bitmapSize = bm;
 				convert();
 			}

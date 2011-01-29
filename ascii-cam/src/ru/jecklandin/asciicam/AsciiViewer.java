@@ -31,6 +31,7 @@ public class AsciiViewer extends ImageView {
 	private boolean m_wait = false;
 	float m_waitProgress = 0;
 	
+	Paint mPaint = new Paint();
 	
 	/**
 	 * text values
@@ -42,12 +43,18 @@ public class AsciiViewer extends ImageView {
 		super(context, set);
 		RESIZING = context.getString(R.string.resizing);
 		ASCIIZATION = context.getString(R.string.processing);
+		
+		mPaint.setTypeface(Typeface.MONOSPACE);
+		mPaint.setAntiAlias(true);
 	}
 	
 	public AsciiViewer(Context context) {
 		super(context);
 		RESIZING = context.getString(R.string.resizing);
 		ASCIIZATION = context.getString(R.string.processing);
+		
+		mPaint.setTypeface(Typeface.MONOSPACE);
+		mPaint.setAntiAlias(true);
 	}
 
 	private String m_fname;
@@ -63,10 +70,10 @@ public class AsciiViewer extends ImageView {
 	
 	@Override
 	 protected void onDraw(Canvas canvas) { 
-		Paint p = new Paint();
-		p.setTextSize(m_textsize);
-		p.setTypeface(Typeface.MONOSPACE);
-		p.setColor( (AsciiCamera.s_inverted && !AsciiCamera.s_colorized) 
+		
+		mPaint.setTextSize(m_textsize);
+		
+		mPaint.setColor( (AsciiCamera.s_inverted && !AsciiCamera.s_colorized) 
 					 ? Color.BLACK : Color.WHITE);
 		
 		m_matrix.reset();
@@ -94,7 +101,7 @@ public class AsciiViewer extends ImageView {
 		//Grayscale text
 		if (AsciiCamera.s_grayscale && m_text!=null && !m_wait) {
 			for (int i=0; i<m_text.length; ++i)
-				canvas.drawText(m_text[i], 0, (float) ((m_textsize-2)*i), p);	
+				canvas.drawText(m_text[i], 0, (float) ((m_textsize-2)*i), mPaint);	
 		}	
 		
 		
@@ -102,8 +109,8 @@ public class AsciiViewer extends ImageView {
 		if (AsciiCamera.s_colorized && m_coloredText != null && !m_wait) {
 			for (int i=0; i<m_coloredText.length; ++i) 
 				for (int j=0; j<m_coloredText[i].length; ++j) {
-					p.setColor(m_coloredText[i][j].color);
-					canvas.drawText(m_coloredText[i][j].symbol,  (float) ((m_textsize-2)*i),  (float) ((m_textsize-2)*j), p);
+					mPaint.setColor(m_coloredText[i][j].color);
+					canvas.drawText(m_coloredText[i][j].symbol,  (float) ((m_textsize-2)*i),  (float) ((m_textsize-2)*j), mPaint);
 				}
 		}
 	
@@ -113,11 +120,11 @@ public class AsciiViewer extends ImageView {
 		m_matrix.postTranslate(m_shiftX, m_shiftY);
 		canvas.setMatrix(m_matrix);
 		if (m_wait) {
-			p.setTextSize(17);
-			canvas.drawText(ASCIIZATION+" "+(int)(m_waitProgress*100)+"%", 20, 20, p);
+			mPaint.setTextSize(17);
+			canvas.drawText(ASCIIZATION+" "+(int)(m_waitProgress*100)+"%", 20, 20, mPaint);
 		} else if (m_text==null && m_coloredText == null) { //initial paint
-			p.setTextSize(17);
-			canvas.drawText(RESIZING, 20, 20, p);
+			mPaint.setTextSize(17);
+			canvas.drawText(RESIZING, 20, 20, mPaint);
 		}
 		
 		if (m_savePic && !m_wait) {
