@@ -9,7 +9,7 @@
    <string name="invert">Invert</string> 
     
     <string name="unmount">Please unmount sdcard to save the file</string>
-    <string name="imsize">Image size</string>
+    <string name="imsize">Resolution</string>
     <string name="reset">Reset</string>
     <string name="saveaspic">Save as picture</string>
     <string name="saveastext">Save as text</string>

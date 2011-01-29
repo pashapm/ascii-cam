@@ -1,21 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<LinearLayout android:id="@+id/LinearLayout01" xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_height="wrap_content" android:layout_width="fill_parent"><LinearLayout android:id="@+id/LinearLayout03"
-			android:layout_height="wrap_content" android:layout_width="fill_parent"
-			android:layout_weight="1" android:background="#888888">
-			<TextView android:id="@+id/TextView02"
-				android:layout_height="wrap_content" android:layout_width="fill_parent"
-				android:layout_gravity="center" android:layout_weight="1.5"
-				android:paddingLeft="5sp" android:typeface="monospace"
-				android:gravity="center" android:textColor="#ff000000" android:text="@string/imsize"
-				android:textSize="14sp"></TextView>
+<LinearLayout android:id="@+id/LinearLayout01"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_height="wrap_content"
+	android:layout_width="fill_parent" android:background="@drawable/size_bg"
+	android:paddingLeft="5dip" android:paddingRight="5dip"
+	android:paddingTop="20dip" android:minWidth="240dip">
+	<LinearLayout android:id="@+id/LinearLayout03"
+		android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:layout_weight="1">
+		<TextView android:id="@+id/TextView02" android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:layout_gravity="center"
+			android:layout_weight="1.5" android:paddingLeft="5sp"
+			android:gravity="center" android:text="@string/imsize"
+			android:textSize="20sp" android:textColor="#c1e7ef"></TextView>
 
-			<Spinner android:layout_weight="1"
-				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical" android:id="@+id/spinner_resolution"></Spinner>
-		</LinearLayout><LinearLayout android:id="@+id/LinearLayout04" android:background="#cccccc" android:orientation="horizontal" android:layout_height="wrap_content" android:minHeight="50dp" android:layout_width="fill_parent">
-			<TextView android:id="@+id/TextView01" android:layout_height="wrap_content" android:textColor="#ff000000" android:text="+/-" android:typeface="monospace" android:gravity="center_horizontal" android:textSize="17sp" android:layout_width="wrap_content" android:layout_gravity="center"></TextView>
-			<SeekBar android:layout_width="fill_parent" android:paddingLeft="5sp" android:paddingRight="5sp" android:max="150" android:layout_gravity="center" android:layout_height="wrap_content" android:id="@+id/seek_ratio"></SeekBar>
+		<Spinner android:layout_weight="1" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:layout_gravity="center_vertical"
+			android:id="@+id/spinner_resolution"></Spinner>
+	</LinearLayout>
+	<LinearLayout android:id="@+id/LinearLayout04"
+		android:orientation="horizontal" android:layout_height="wrap_content"
+		android:minHeight="50dp" android:layout_width="fill_parent" android:gravity="center_vertical">
+		
+		<ImageView android:id="@+id/ImageView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/zoom" android:layout_marginRight="10dip" android:layout_marginLeft="5dip"></ImageView><SeekBar android:layout_width="fill_parent"
+			android:paddingLeft="5sp" android:paddingRight="5sp" android:max="150"
+			android:layout_gravity="center" android:layout_height="wrap_content"
+			android:id="@+id/seek_ratio"></SeekBar>
 
-		</LinearLayout></LinearLayout>
+	
+
+</LinearLayout>
+</LinearLayout>
