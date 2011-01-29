@@ -3,6 +3,8 @@ package ru.jecklandin.asciicam;
 import com.flurry.android.FlurryAgent;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class NewMenu extends Activity implements OnClickListener, OnCheckedChangeListener {
@@ -79,6 +82,21 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
     	m_butAbout = (Button) findViewById(R.id.about_btn);
     	m_share = (Button) findViewById(R.id.share);
 		
+    	// typefaces
+    	Typeface tf = AsciiApplication.getInstance().getArtTypeface();
+    	Button[] btns = new Button[] {
+    			m_butPic, m_butText, m_butReset, m_butAbout, m_share
+    	};
+    	for (Button b : btns) {
+    		b.setTypeface(tf);
+    	}
+    	m_gsRadio.setTypeface(tf);
+    	m_colRadio.setTypeface(tf);
+    	m_bwCheck.setTypeface(tf);
+    	m_checkInvert.setTypeface(tf);
+    	((TextView) findViewById(R.id.res_label)).setTypeface(tf);
+    	
+    	
 		mSizeBtn.setOnCheckedChangeListener(this);
 		mColorBtn.setOnCheckedChangeListener(this);
 		mMoreBtn.setOnCheckedChangeListener(this);
