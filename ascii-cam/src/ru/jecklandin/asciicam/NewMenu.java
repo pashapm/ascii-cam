@@ -209,9 +209,11 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
 		case R.id.save_pic:
 			finish();
 			mFacade.savePicture();
+			FlurryAgent.onEvent("picSaved");
 			break;
 		case R.id.save_text:
 			finish();
+			FlurryAgent.onEvent("textSaved");
 			mFacade.saveText();
 			break;
 		case R.id.btn_reset:
