@@ -34,10 +34,12 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
 	private RadioButton mSizeBtn;
 	private RadioButton mColorBtn;
 	private RadioButton mMoreBtn;
+//	private RadioButton mDonateBtn;
 	
 	private LinearLayout mSizeLay;
 	private LinearLayout mColorLay;
 	private LinearLayout mMoreLay;
+//	private LinearLayout mDonateLay;
 	
 	private AsciiCamera.Facade mFacade;
 	
@@ -71,10 +73,12 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
 		mSizeBtn = (RadioButton) findViewById(R.id.size_btn);
 		mColorBtn = (RadioButton) findViewById(R.id.color_btn);
 		mMoreBtn = (RadioButton) findViewById(R.id.more_btn);
+//		mDonateBtn = (RadioButton) findViewById(R.id.donate_btn);
 		
 		mSizeLay = (LinearLayout) findViewById(R.id.include02);
 		mColorLay = (LinearLayout) findViewById(R.id.include01);
 		mMoreLay = (LinearLayout) findViewById(R.id.include03);
+//		mDonateLay = (LinearLayout) findViewById(R.id.include04);
 
         m_imsizeSpinner = (Spinner) findViewById(R.id.spinner_resolution);
         m_textSizeSeek = (SeekBar) findViewById(R.id.seek_ratio);
@@ -101,6 +105,7 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
     	m_bwCheck.setTypeface(tf);
     	m_checkInvert.setTypeface(tf);
     	((TextView) findViewById(R.id.res_label)).setTypeface(tf);
+    	((Button) findViewById(R.id.donate)).setTypeface(tf);
     	
 	}
 	
@@ -108,6 +113,7 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
 		mSizeBtn.setOnCheckedChangeListener(this);
 		mColorBtn.setOnCheckedChangeListener(this);
 		mMoreBtn.setOnCheckedChangeListener(this);
+//		mDonateBtn.setOnCheckedChangeListener(this);
 		
 		m_bwCheck.setOnCheckedChangeListener(this);
 		m_checkInvert.setOnCheckedChangeListener(this);
@@ -237,6 +243,7 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
 		mSizeLay.setVisibility(View.GONE);
 		mColorLay.setVisibility(View.GONE);
 		mMoreLay.setVisibility(View.GONE);
+//		mDonateLay.setVisibility(View.GONE);
 	}
 
 	@Override
@@ -277,7 +284,13 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
 				mMoreLay.setVisibility(View.VISIBLE);
 			}
 			break;
-			
+		case R.id.donate_btn:
+			if (isChecked) {
+				hideAll();
+//				mDonateLay.setVisibility(View.VISIBLE);
+			}
+			break;
+			 
 		//particular buttons
 		case R.id.check_invert:
 			mFacade.setInverted(isChecked);
