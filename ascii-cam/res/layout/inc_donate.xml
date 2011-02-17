@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content" android:orientation="vertical" android:background="@drawable/more_bg" android:paddingLeft="15dip" android:paddingTop="5dip" android:paddingRight="5dip" android:paddingBottom="5dip" android:gravity="center">
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/donate" android:textColor="#c1e7ef" android:id="@+id/donate_lab" android:padding="5dip"></TextView>
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/yellow_btn" android:id="@+id/donate" android:text="Donate" android:padding="5dip"></Button>
+</LinearLayout>

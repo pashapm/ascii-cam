@@ -6,7 +6,7 @@
 	android:orientation="vertical" android:layout_height="wrap_content"
 	android:layout_width="fill_parent" android:background="@drawable/size_bg"
 	android:paddingLeft="5dip" android:paddingRight="5dip"
-	android:paddingTop="20dip" android:minWidth="240dip">
+	android:paddingTop="20dip" android:minWidth="300dip">
 	<LinearLayout android:id="@+id/LinearLayout03"
 		android:layout_height="wrap_content" android:layout_width="fill_parent"
 		android:layout_weight="1" android:orientation="vertical">
@@ -22,12 +22,13 @@
 		android:orientation="horizontal" android:layout_height="wrap_content"
 		android:minHeight="50dp" android:layout_width="fill_parent" android:gravity="center_vertical">
 		
-		<ImageView android:id="@+id/ImageView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/zoom" android:layout_marginRight="10dip" android:layout_marginLeft="5dip"></ImageView><SeekBar android:layout_width="fill_parent"
+		<ImageView android:id="@+id/ImageView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="10dip" android:layout_marginLeft="5dip" android:src="@drawable/unzoom"></ImageView><SeekBar android:layout_width="fill_parent"
 			android:paddingLeft="5sp" android:paddingRight="5sp" android:max="150"
 			android:layout_gravity="center" android:layout_height="wrap_content"
-			android:id="@+id/seek_ratio"></SeekBar>
+			android:id="@+id/seek_ratio" android:layout_weight="1"></SeekBar>
 
 	
 
+<ImageView android:id="@+id/ImageView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/zoom" android:layout_marginLeft="5dip"></ImageView>
 </LinearLayout>
 </LinearLayout>
