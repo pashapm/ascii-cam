@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +56,7 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
 	private Button m_butReset;
 	private Button m_butAbout;
 	private Button m_share;
+	private Button m_donate;
 	
 	private boolean mMayAction = true;
 	
@@ -91,6 +93,7 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
     	m_butReset = (Button) findViewById(R.id.btn_reset); 
     	m_butAbout = (Button) findViewById(R.id.about_btn);
     	m_share = (Button) findViewById(R.id.share);
+    	m_donate = (Button) findViewById(R.id.donate);
 		
     	// typefaces
     	Typeface tf = AsciiApplication.getInstance().getArtTypeface();
@@ -105,8 +108,18 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
     	m_bwCheck.setTypeface(tf);
     	m_checkInvert.setTypeface(tf);
     	((TextView) findViewById(R.id.res_label)).setTypeface(tf);
-    	((Button) findViewById(R.id.donate)).setTypeface(tf);
-    	
+    	m_donate.setTypeface(tf);
+    	 
+    	m_donate.setOnClickListener(new OnClickListener() {
+			   
+			@Override
+			public void onClick(View v) {
+				String search = "http://market.android.com/details?id=ru.jecklandin.asciicam";
+				Intent i = new Intent();
+				i.setData(Uri.parse(search));
+				startActivity(i);
+			}
+		});
 	}
 	
 	private void setListeners() {

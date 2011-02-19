@@ -35,6 +35,7 @@ import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.Camera.Parameters;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;

@@ -88,16 +88,20 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
     	if (version >= 5) {
     		List<Camera.Size> sizes = getSizes(parameters);
     		
-    		Camera.Size rightSize = null;
-    		int minDiff = Integer.MAX_VALUE;
-    		for (Camera.Size size : sizes) {
-    			int d = w - size.width;
-    			if (d > 0 && d < minDiff) {
-    				minDiff = d;
-    				rightSize = size;
-    			}
+    		if (sizes == null) {
+    			parameters.setPreviewSize(w, h);
+    		} else {
+    			Camera.Size rightSize = null;
+        		int minDiff = Integer.MAX_VALUE;
+        		for (Camera.Size size : sizes) {
+        			int d = w - size.width;
+        			if (d > 0 && d < minDiff) {
+        				minDiff = d;
+        				rightSize = size;
+        			}
+        		}
+        		parameters.setPreviewSize(rightSize.width, rightSize.height);
     		}
-    		parameters.setPreviewSize(rightSize.width, rightSize.height);
     	} else {
     		parameters.setPreviewSize(w, h);
     	}
