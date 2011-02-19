@@ -1,21 +1,14 @@
 package ru.jecklandin.asciicam;
 
-import com.flurry.android.FlurryAgent;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewStub;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.view.ViewStub.OnInflateListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -29,6 +22,8 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+
+import com.flurry.android.FlurryAgent;
 
 public class NewMenu extends Activity implements OnClickListener, OnCheckedChangeListener {
 
@@ -114,7 +109,8 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
 			   
 			@Override
 			public void onClick(View v) {
-				String search = "http://market.android.com/details?id=ru.jecklandin.asciicam";
+				FlurryAgent.onEvent("donate");
+				String search = "http://market.android.com/details?id=ru.jecklandin.asciicamdonate";
 				Intent i = new Intent();
 				i.setData(Uri.parse(search));
 				startActivity(i);
