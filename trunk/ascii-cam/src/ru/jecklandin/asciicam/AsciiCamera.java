@@ -93,7 +93,7 @@ public class AsciiCamera extends Activity {
 	
 	static Bitmap s_defaultBitmap;
 	
-	public static String SAVE_DIR = "/sdcard/asciicamera/";
+	public static String SAVE_DIR;// = "/sdcard/asciicamera/";
 	
 	private Uri m_lastUri;
 	private boolean m_offerChoosingName;
@@ -114,9 +114,9 @@ public class AsciiCamera extends Activity {
     public void onCreate(Bundle savedInstanceState) { 
         super.onCreate(savedInstanceState); 
         AsciiCamera.s_instance = this;
-        
+         
         Handler han = new Handler();
-        
+         
         ExceptionHandler.register(this, "http://android-exceptions-handler.appspot.com/exception.groovy",han);
         
         getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -128,9 +128,11 @@ public class AsciiCamera extends Activity {
         AsciiCamera.CONV_HEIGHT = AsciiCamera.s_screenHeight;
         AsciiCamera.CONV_WIDTH = AsciiCamera.s_screenWidth;
         
+        
+        AsciiCamera.SAVE_DIR = Environment.getExternalStorageDirectory()+"/asciicamera/";
         File f = new File(AsciiCamera.SAVE_DIR);
         if (!f.exists())    
-        	f.mkdirs(); 
+        	f.mkdir(); 
         
         m_viewer = new AsciiViewer(this);
         
@@ -499,7 +501,10 @@ public class AsciiCamera extends Activity {
 	void processSavingText(String fname) {
     	FileWriter fw = null;
 		try {
-			fw = new FileWriter(AsciiCamera.SAVE_DIR + fname);
+			File f = new File(AsciiCamera.SAVE_DIR + fname);
+			f.createNewFile();
+			
+			fw = new FileWriter(f);
 			fw.write( AsciiCamera.s_colorized ? 
 					getColorizedText() : 
 					getGrayscaleText());
@@ -567,7 +572,11 @@ public class AsciiCamera extends Activity {
 		
 		FileOutputStream fos = null;
 		try {
-			fos = new FileOutputStream(AsciiCamera.SAVE_DIR + fname);
+			
+			File f = new File(AsciiCamera.SAVE_DIR + fname);
+			f.createNewFile();
+			
+			fos = new FileOutputStream(f);
 			b.compress(CompressFormat.PNG, 100, fos);
 			
 			ContentValues cv = new ContentValues();
@@ -588,9 +597,14 @@ public class AsciiCamera extends Activity {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}  finally {
 			try {
-				fos.close();
+				if (fos != null) {
+					fos.close();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
