@@ -129,10 +129,7 @@ public class AsciiCamera extends Activity {
         AsciiCamera.CONV_WIDTH = AsciiCamera.s_screenWidth;
         
         
-        AsciiCamera.SAVE_DIR = Environment.getExternalStorageDirectory()+"/asciicamera/";
-        File f = new File(AsciiCamera.SAVE_DIR);
-        if (!f.exists())    
-        	f.mkdir(); 
+        
         
         m_viewer = new AsciiViewer(this);
         

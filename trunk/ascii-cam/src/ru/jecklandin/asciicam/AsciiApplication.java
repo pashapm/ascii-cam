@@ -1,7 +1,11 @@
 package ru.jecklandin.asciicam;
 
+import java.io.File;
+
 import android.app.Application;
 import android.graphics.Typeface;
+import android.os.Environment;
+import android.util.Log;
 
 public class AsciiApplication extends Application {
 
@@ -18,6 +22,12 @@ public class AsciiApplication extends Application {
 		super.onCreate();
 		AsciiApplication.sInstance = this;
 		mArtTypeface = Typeface.createFromAsset(getAssets(), "helsinki.ttf");
+		
+		AsciiCamera.SAVE_DIR = Environment.getExternalStorageDirectory()+"/asciicamera/";
+		Log.d("!!!!", AsciiCamera.SAVE_DIR);
+        File f = new File(AsciiCamera.SAVE_DIR);
+        if (!f.exists())    
+        	f.mkdir();  
 	}
 	
 	public Typeface getArtTypeface() {
