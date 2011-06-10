@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.hardware.Camera;
+import android.hardware.Camera.Size;
 import android.os.Build;
 import android.text.Layout;
 import android.util.Log;
@@ -68,7 +69,7 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         // Now that the size is known, set up the camera parameters and begin
         // the preview.
-    	
+    	 
     	Camera.Parameters parameters = null;
     	if (mCamera != null ) {
     		try {
@@ -82,51 +83,27 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
     		return;
     	}
 
-    	
-    	//get proper size
-    	int version = Integer.parseInt(Build.VERSION.SDK);
-    	if (version >= 5) {
-    		List<Camera.Size> sizes = getSizes(parameters);
-    		
-    		if (sizes == null) {
-    			parameters.setPreviewSize(w, h);
-    		} else {
-    			Camera.Size rightSize = null;
-        		int minDiff = Integer.MAX_VALUE;
-        		for (Camera.Size size : sizes) {
-        			int d = w - size.width;
-        			if (d > 0 && d < minDiff) {
-        				minDiff = d;
-        				rightSize = size;
-        			}
-        		}
-        		parameters.setPreviewSize(rightSize.width, rightSize.height);
+    	List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+		if (sizes == null) {
+			parameters.setPreviewSize(w, h);
+		} else {
+			Camera.Size rightSize = null;
+    		int minDiff = Integer.MAX_VALUE;
+    		for (Camera.Size size : sizes) {
+    			int d = w - size.width;
+    			if (d > 0 && d < minDiff) {
+    				minDiff = d;
+    				rightSize = size;
+    			}
     		}
-    	} else {
-    		parameters.setPreviewSize(w, h);
-    	}
+    		parameters.setPreviewSize(rightSize.width, rightSize.height);
+		}
     	
         parameters.setPreviewSize(w, h);
         mCamera.setParameters(parameters);
         mCamera.startPreview();
     }
     
-    private List<Camera.Size> getSizes(Camera.Parameters parameters) {
-    	Method getFormats = null;
-		for (Method m : Camera.Parameters.class.getDeclaredMethods()) {
-			if (m.getName().equals("getSupportedPreviewSizes")) {
-				getFormats = m;
-				break;
-			}
-		}  
-		try {
-			return (List<Camera.Size>) getFormats.invoke(parameters);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-    } 
-
 	public static void setcamOpen(boolean b) {
 		camOpen = b;
 	}

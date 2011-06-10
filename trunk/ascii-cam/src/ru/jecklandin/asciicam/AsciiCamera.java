@@ -830,10 +830,17 @@ public class AsciiCamera extends Activity {
 				invert();
 		    	convert();
 			}
-		}
+		}  
 		
-		BitmapSize lastSize = new BitmapSize(AsciiCamera.s_defaultBitmap.getWidth(),
-				AsciiCamera.s_defaultBitmap.getHeight());
+		BitmapSize lastSize;
+		{
+			if (AsciiCamera.s_defaultBitmap == null) {
+				lastSize = new BitmapSize(AsciiCamera.CONV_WIDTH, AsciiCamera.CONV_HEIGHT);
+			} else {
+				lastSize = new BitmapSize(AsciiCamera.s_defaultBitmap.getWidth(),
+						AsciiCamera.s_defaultBitmap.getHeight());
+			}
+		}
 		
 		public void setImageSize(BitmapSize bm) {
 //			BitmapSize cursize = new BitmapSize(AsciiCamera.s_defaultBitmap.getWidth(),
