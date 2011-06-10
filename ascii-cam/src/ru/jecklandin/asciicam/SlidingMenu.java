@@ -169,7 +169,7 @@ public class SlidingMenu extends Activity {
     	m_butReset = (Button) m_ly.findViewById(R.id.Button03); 
     	m_butAbout = (Button) m_ly.findViewById(R.id.Button04);
     	m_more = (Button) m_ly.findViewById(R.id.morebutton);
-    	m_less = (Button) m_ly.findViewById(R.id.less);
+//    	m_less = (Button) m_ly.findViewById(R.id.less);
     	m_share = (Button) m_ly.findViewById(R.id.share);
 //    	m_cowimage =  (ImageView) m_ly.findViewById(R.id.cow); 
     	  

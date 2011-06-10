@@ -2,9 +2,13 @@ package ru.jecklandin.asciicam;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -116,6 +120,19 @@ public class NewMenu extends Activity implements OnClickListener, OnCheckedChang
 				startActivity(i);
 			}
 		});
+    	
+    	PackageManager manager = this.getPackageManager();
+    	try {
+			PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+			Log.d("!!!!!", info.packageName);
+			if (info.packageName.equals("ru.jecklandin.asciicamdonate")) {
+	    		m_donate.setVisibility(View.GONE);
+	    	} else {
+	    		m_donate.setVisibility(View.VISIBLE);
+	    	}
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void setListeners() {
