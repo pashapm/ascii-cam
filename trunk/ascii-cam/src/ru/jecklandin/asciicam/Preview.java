@@ -100,7 +100,13 @@ class Preview extends SurfaceView implements SurfaceHolder.Callback {
 		}
     	
         parameters.setPreviewSize(w, h);
-        mCamera.setParameters(parameters);
+        try {
+        	mCamera.setParameters(parameters);
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	AsciiCamera.s_instance.restartApp();
+        }
+        
         mCamera.startPreview();
     }
     
